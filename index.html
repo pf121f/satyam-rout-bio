@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satyam Rout | Marriage Biodata & Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX compilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ivory: '#FDFBF7',
+                        cream: '#F7F4EB',
+                        gold: '#D4AF37',
+                        'gold-dark': '#B38F27',
+                        forest: '#1E3A2F',
+                        'forest-dark': '#13261E',
+                        maroon: '#6A1B29',
+                        warmgray: '#78716c'
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #1E3A2F;
+        }
+        .font-serif {
+            font-family: '"Cormorant Garamond"', serif;
+        }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-biodata, #printable-biodata * {
+                visibility: visible;
+            }
+            #printable-biodata {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 20px;
+                background: white !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-ivory text-forest min-h-screen selection:bg-gold selection:text-white">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // SVG Icon Components
+        const Icon = ({ name, className = "w-5 h-5", ...props }) => {
+            const icons = {
+                user: <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>,
+                userCircle: <g><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></g>,
+                calendar: <g><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></g>,
+                clock: <g><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></g>,
+                mapPin: <g><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></g>,
+                ruler: <g><path d="M2 12h20"></path><path d="M6 16v-8"></path><path d="M10 16v-6"></path><path d="M14 16v-8"></path><path d="M18 16v-6"></path></g>,
+                heart: <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>,
+                bookOpen: <g><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></g>,
+                briefcase: <g><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></g>,
+                users: <g><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></g>,
+                phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>,
+                mail: <g><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></g>,
+                share: <g><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></g>,
+                download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></g>,
+                shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>,
+                lock: <g><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></g>,
+                camera: <g><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></g>,
+                check: <polyline points="20 6 9 17 4 12"></polyline>,
+                externalLink: <g><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></g>,
+                close: <g><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></g>,
+                menu: <g><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></g>,
+                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></g>,
+                plus: <g><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></g>,
+                trash: <g><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></g>,
+                settings: <g><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></g>,
+                refresh: <g><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></g>
+            };
+
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+                    {icons[name] || icons.user}
+                </svg>
+            );
+        };
+
+        // Initial Data Structure
+        const initialData = {
+            personal: {
+                fullName: "Satyam Rout",
+                dob: "16 October 1999",
+                timeOfBirth: "9:47 AM",
+                placeOfBirth: "Rourkela, Odisha",
+                height: "5 feet 8 inches (172 cm)",
+                bloodGroup: "B Positive",
+                languages: "English, Odia, Hindi"
+            },
+            religious: {
+                religion: "Hindu",
+                caste: "ଖଣ୍ଡାୟତ (Khandayat)",
+                gothra: "ମୁଦଗଲସ୍ୟ (Mudgalasya)",
+                rashi: "Sagittarius / ଧନୁ (Dhanu)"
+            },
+            education: {
+                degree: "Bachelor of Technology in Aerospace Engineering",
+                college: "Hindustan University",
+                designation: "System Engineer",
+                organization: "Boeing India Private Limited",
+                location: "Bangalore, India"
+            },
+            family: {
+                fatherName: "Ashok Kumar Rout",
+                fatherProf: "Fitter at L&T, Kansbahal",
+                motherName: "Sanjukta Rout",
+                motherProf: "Homemaker",
+                sibling: "One younger sister (MSc final year student, Unmarried)",
+                native: "Rajkanika, Kendrapada, Odisha"
+            },
+            contact: {
+                phone: "+91 98765 43210",
+                email: "satyam.rout@example.com",
+                linkedin: "https://www.linkedin.com/in/satyam-rout-339ba2162?utm_source=share_via&utm_content=profile&utm_medium=member_android",
+                instagram: "https://www.instagram.com/p_e_ace_/",
+                showPhone: true,
+                showAddress: false
+            },
+            photos: [
+                { id: 1, url: "IMG-20260824-WA0003.jpg.jpg", caption: "Professional Portrait", category: "Portrait", date: "2026-08-24", isProfile: true },
+                { id: 2, url: "IMG-20260824-WA0004.jpg.jpeg", caption: "Traditional Kurta Look", category: "Traditional", date: "2026-08-24", isProfile: false },
+                { id: 3, url: "IMG-20260825-WA0003.jpg.jpeg", caption: "Temple Visit, Karnataka", category: "Travel", date: "2026-08-25", isProfile: false },
+                { id: 4, url: "file_000000009cdc8208adf68cc56e0269eb~2.jpg.jpg", caption: "Scenic River Walk", category: "Travel", date: "2026-08-20", isProfile: false },
+                { id: 5, url: "WhatsApp Image 2026-10-20 at 12.47.39.jpeg", caption: "Sunset View at Riverbank", category: "Travel", date: "2026-10-20", isProfile: false }
+            ]
+        };
+
+        function App() {
+            // State Management with localStorage
+            const [data, setData] = useState(() => {
+                const saved = localStorage.getItem('satyam_biodata_data');
+                return saved ? JSON.parse(saved) : initialData;
+            });
+
+            useEffect(() => {
+                localStorage.setItem('satyam_biodata_data', JSON.stringify(data));
+            }, [data]);
+
+            // UI States
+            const [activeTab, setActiveTab] = useState('all'); // for gallery
+            const [lightboxPhoto, setLightboxPhoto] = useState(null);
+            const [isAdminOpen, setIsAdminOpen] = useState(false);
+            const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
+            const [toastMessage, setToastMessage] = useState(null);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+            // Contact Form State
+            const [contactForm, setContactForm] = useState({ name: '', contact: '', message: '' });
+            const [formSubmitted, setFormSubmitted] = useState(false);
+
+            const showToast = (msg) => {
+                setToastMessage(msg);
+                setTimeout(() => setToastMessage(null), 3500);
+            };
+
+            const copyWebsiteLink = () => {
+                const dummy = document.createElement('input');
+                document.body.appendChild(dummy);
+                dummy.value = window.location.href;
+                document.execCommand('copy');
+                document.body.removeChild(dummy);
+                showToast("Website link copied to clipboard!");
+            };
+
+            const handleContactSubmit = (e) => {
+                e.preventDefault();
+                if (!contactForm.name || !contactForm.contact || !contactForm.message) {
+                    showToast("Please fill in all fields.");
+                    return;
+                }
+                setFormSubmitted(true);
+                showToast("Message sent successfully to Satyam's family!");
+                setContactForm({ name: '', contact: '', message: '' });
+                setTimeout(() => setFormSubmitted(false), 5000);
+            };
+
+            // Find profile photo
+            const profilePhoto = data.photos.find(p => p.isProfile) || data.photos[0];
+
+            return (
+                <div className="min-h-screen bg-ivory text-forest font-sans relative">
+                    {/* Toast Notification */}
+                    {toastMessage && (
+                        <div className="fixed bottom-6 right-6 z-50 bg-forest text-white px-6 py-3 rounded-xl shadow-2xl border border-gold/30 flex items-center space-x-3 animate-bounce">
+                            <Icon name="check" className="w-5 h-5 text-gold" />
+                            <span className="font-medium text-sm">{toastMessage}</span>
+                        </div>
+                    )}
+
+                    {/* Navigation Bar */}
+                    <nav className="sticky top-0 z-40 bg-ivory/90 backdrop-blur-md border-b border-gold/20 shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                            <a href="#home" className="flex items-center space-x-3">
+                                <div className="w-10 h-10 rounded-full bg-forest text-gold flex items-center justify-center font-serif font-bold text-xl border border-gold/40 shadow-inner">
+                                    SR
+                                </div>
+                                <div>
+                                    <h1 className="font-serif text-xl font-bold tracking-wide text-forest">Satyam Rout</h1>
+                                    <p className="text-xs text-warmgray tracking-widest uppercase">Marriage Biodata</p>
+                                </div>
+                            </a>
+
+                            {/* Desktop Nav Links */}
+                            <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+                                <a href="#home" className="hover:text-gold transition-colors">Home</a>
+                                <a href="#biodata" className="hover:text-gold transition-colors">Biodata</a>
+                                <a href="#religious" className="hover:text-gold transition-colors">Astrological</a>
+                                <a href="#education" className="hover:text-gold transition-colors">Education & Career</a>
+                                <a href="#family" className="hover:text-gold transition-colors">Family</a>
+                                <a href="#gallery" className="hover:text-gold transition-colors">Gallery</a>
+                                <a href="#contact" className="hover:text-gold transition-colors">Contact</a>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="hidden lg:flex items-center space-x-3">
+                                <button onClick={() => setIsPdfModalOpen(true)} className="bg-forest hover:bg-forest-dark text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow transition flex items-center space-x-2 border border-gold/30">
+                                    <Icon name="download" className="w-4 h-4 text-gold" />
+                                    <span>Download PDF</span>
+                                </button>
+                                <button onClick={() => setIsAdminOpen(true)} className="p-2.5 rounded-lg border border-gold/40 text-forest hover:bg-gold/10 transition" title="Admin Login">
+                                    <Icon name="lock" className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            {/* Mobile menu button */}
+                            <div className="md:hidden flex items-center space-x-2">
+                                <button onClick={() => setIsAdminOpen(true)} className="p-2 text-forest">
+                                    <Icon name="lock" className="w-5 h-5" />
+                                </button>
+                                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-forest">
+                                    <Icon name={mobileMenuOpen ? "close" : "menu"} className="w-6 h-6" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile Menu dropdown */}
+                        {mobileMenuOpen && (
+                            <div className="md:hidden bg-cream border-b border-gold/20 px-4 pt-2 pb-6 space-y-3">
+                                <a href="#home" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Home</a>
+                                <a href="#biodata" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Biodata & Details</a>
+                                <a href="#religious" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Astrological</a>
+                                <a href="#education" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Education & Career</a>
+                                <a href="#family" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Family Background</a>
+                                <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Photo Gallery</a>
+                                <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Contact & Inquiry</a>
+                                <div className="pt-2 flex space-x-3">
+                                    <button onClick={() => { setIsPdfModalOpen(true); setMobileMenuOpen(false); }} className="w-full bg-forest text-white py-2.5 rounded-lg text-sm font-medium flex items-center justify-center space-x-2">
+                                        <Icon name="download" className="w-4 h-4 text-gold" />
+                                        <span>Download PDF</span>
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </nav>
+
+                    {/* Hero Section */}
+                    <section id="home" className="relative pt-16 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
+                        <div className="absolute inset-0 -z-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:24px_24px] opacity-10"></div>
+                        
+                        <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
+                            <div className="inline-flex items-center space-x-2 bg-gold/15 text-forest px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest border border-gold/30">
+                                <span className="w-2 h-2 rounded-full bg-gold animate-ping"></span>
+                                <span>Verified Matrimonial Profile</span>
+                            </div>
+                            <h2 className="text-sm tracking-widest font-semibold uppercase text-gold">Marriage Biodata</h2>
+                            <h1 className="text-4xl sm:text-6xl font-serif font-bold text-forest leading-tight">
+                                Satyam Rout
+                            </h1>
+                            <p className="text-lg text-warmgray font-light max-w-xl mx-auto lg:mx-0">
+                                A little introduction to my life, family, education, and aspirations. System Engineer at Boeing India with a deep rooted foundation in Odia culture and family values.
+                            </p>
+                            <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
+                                <a href="#biodata" className="bg-forest hover:bg-forest-dark text-white px-8 py-3.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition flex items-center space-x-2 border border-gold/30">
+                                    <span>View Biodata</span>
+                                    <Icon name="userCircle" className="w-5 h-5 text-gold" />
+                                </a>
+                                <a href="#gallery" className="bg-cream hover:bg-gold/20 text-forest border border-gold/40 px-8 py-3.5 rounded-xl font-medium shadow transition flex items-center space-x-2">
+                                    <span>Explore Photo Gallery</span>
+                                    <Icon name="camera" className="w-5 h-5 text-gold" />
+                                </a>
+                            </div>
+
+                            <div className="pt-6 flex items-center justify-center lg:justify-start space-x-6 text-sm text-warmgray border-t border-gold/20">
+                                <div><strong className="text-forest font-semibold">Born:</strong> Rourkela, Odisha</div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
+                                <div><strong className="text-forest font-semibold">Working in:</strong> Bangalore</div>
+                                <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
+                                <div><strong className="text-forest font-semibold">Education:</strong> B.Tech Aerospace</div>
+                            </div>
+                        </div>
+
+                        {/* Profile Image Hero */}
+                        <div className="lg:w-1/2 flex justify-center">
+                            <div className="relative">
+                                <div className="absolute -inset-3 bg-gradient-to-tr from-gold to-forest rounded-3xl opacity-30 blur-lg"></div>
+                                <div className="relative w-72 sm:w-80 h-96 sm:h-[420px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-cream">
+                                    <img 
+                                        src={profilePhoto.url} 
+                                        alt="Satyam Rout Portrait" 
+                                        className="w-full h-full object-cover object-top hover:scale-105 transition duration-700"
+                                        onError={(e) => { e.target.src = "https://placehold.co/400x500/1E3A2F/D4AF37?text=Satyam+Rout"; }}
+                                    />
+                                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent p-6 text-white text-center">
+                                        <p className="font-serif text-xl font-bold tracking-wide">Satyam Rout</p>
+                                        <p className="text-xs text-gold font-medium uppercase tracking-widest mt-0.5">Aerospace Engineer • Boeing</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Biodata & Personal Details Section */}
+                    <section id="biodata" className="py-20 bg-cream/60 border-y border-gold/20">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Comprehensive Overview</h2>
+                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Personal & Physical Details</h3>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                                <p className="text-warmgray text-sm">Verified personal information sourced directly from official records.</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
+                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
+                                        <Icon name="userCircle" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-warmgray uppercase tracking-wider">Full Name</p>
+                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.fullName}</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
+                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
+                                        <Icon name="calendar" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-warmgray uppercase tracking-wider">Date of Birth</p>
+                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.dob}</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
+                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
+                                        <Icon name="clock" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-warmgray uppercase tracking-wider">Time of Birth</p>
+                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.timeOfBirth}</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
+                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
+                                        <Icon name="mapPin" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-warmgray uppercase tracking-wider">Place of Birth</p>
+                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.placeOfBirth}</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
+                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
+                                        <Icon name="ruler" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-warmgray uppercase tracking-wider">Height</p>
+                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.height}</p>
+                                    </div>
+                                </div>
+
+                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
+                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
+                                        <Icon name="heart" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-warmgray uppercase tracking-wider">Blood Group & Languages</p>
+                                        <p className="font-serif text-lg font-bold text-forest mt-1">{data.personal.bloodGroup} • {data.personal.languages}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Religious and Astrological Section */}
+                    <section id="religious" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                        <div className="bg-forest text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl border border-gold/40">
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+                            
+                            <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Heritage & Tradition</h2>
+                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-white">Religious & Astrological Details</h3>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
+                                    <p className="text-xs text-gold uppercase tracking-wider">Religion</p>
+                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.religion}</p>
+                                </div>
+
+                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
+                                    <p className="text-xs text-gold uppercase tracking-wider">Caste / Sub-Caste</p>
+                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.caste}</p>
+                                </div>
+
+                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
+                                    <p className="text-xs text-gold uppercase tracking-wider">Gothra / Clan</p>
+                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.gothra}</p>
+                                </div>
+
+                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
+                                    <p className="text-xs text-gold uppercase tracking-wider">Rashi / Zodiac</p>
+                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.rashi}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Education and Professional Details */}
+                    <section id="education" className="py-20 bg-cream/60 border-y border-gold/20">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Professional Journey</h2>
+                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Education & Career</h3>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20 space-y-6 relative">
+                                    <div className="absolute top-6 right-6 p-3 bg-gold/15 rounded-2xl text-forest">
+                                        <Icon name="bookOpen" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <span className="text-xs font-semibold bg-gold/15 text-forest px-3 py-1 rounded-full uppercase tracking-wider">Education</span>
+                                    <div>
+                                        <h4 className="font-serif text-2xl font-bold text-forest mt-2">{data.education.degree}</h4>
+                                        <p className="text-warmgray font-medium mt-1">{data.education.college}</p>
+                                    </div>
+                                    <p className="text-sm text-warmgray leading-relaxed">
+                                        Specialized rigorous engineering curriculum focusing on advanced aerospace systems, aerodynamics, and structural mechanics.
+                                    </p>
+                                </div>
+
+                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20 space-y-6 relative">
+                                    <div className="absolute top-6 right-6 p-3 bg-gold/15 rounded-2xl text-forest">
+                                        <Icon name="briefcase" className="w-6 h-6 text-gold" />
+                                    </div>
+                                    <span className="text-xs font-semibold bg-gold/15 text-forest px-3 py-1 rounded-full uppercase tracking-wider">Current Profession</span>
+                                    <div>
+                                        <h4 className="font-serif text-2xl font-bold text-forest mt-2">{data.education.designation}</h4>
+                                        <p className="text-warmgray font-medium mt-1">{data.education.organization} • {data.education.location}</p>
+                                    </div>
+                                    <p className="text-sm text-warmgray leading-relaxed">
+                                        Working as a System Engineer at Boeing India Private Limited in Bangalore, contributing to world-class aerospace engineering systems and innovations.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Family Background Section */}
+                    <section id="family" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                            <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Roots & Values</h2>
+                            <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Family Background</h3>
+                            <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                            <p className="text-warmgray text-sm">Hailing from a respected and cultured family with strong moral principles.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
+                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
+                                    <Icon name="users" className="w-6 h-6 text-gold" />
+                                </div>
+                                <h4 className="font-serif text-xl font-bold text-forest">Father's Details</h4>
+                                <p className="font-semibold text-forest">{data.family.fatherName}</p>
+                                <p className="text-xs text-warmgray">{data.family.fatherProf}</p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
+                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
+                                    <Icon name="heart" className="w-6 h-6 text-gold" />
+                                </div>
+                                <h4 className="font-serif text-xl font-bold text-forest">Mother's Details</h4>
+                                <p className="font-semibold text-forest">{data.family.motherName}</p>
+                                <p className="text-xs text-warmgray">{data.family.motherProf}</p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
+                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
+                                    <Icon name="user" className="w-6 h-6 text-gold" />
+                                </div>
+                                <h4 className="font-serif text-xl font-bold text-forest">Sibling</h4>
+                                <p className="text-semibold text-forest text-sm">Younger Sister</p>
+                                <p className="text-xs text-warmgray">{data.family.sibling}</p>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
+                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
+                                    <Icon name="mapPin" className="w-6 h-6 text-gold" />
+                                </div>
+                                <h4 className="font-serif text-xl font-bold text-forest">Native Place</h4>
+                                <p className="font-semibold text-forest">Rajkanika, Kendrapada</p>
+                                <p className="text-xs text-warmgray">Odisha, India</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Photo Gallery Section */}
+                    <section id="gallery" className="py-20 bg-cream/60 border-y border-gold/20">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Moments & Memories</h2>
+                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Photo Gallery</h3>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                                <p className="text-warmgray text-sm">Glimpses of life, travels, and traditional occasions.</p>
+                            </div>
+
+                            {/* Category Filter */}
+                            <div className="flex justify-center space-x-2 sm:space-x-4 mb-10">
+                                {['all', 'Portrait', 'Traditional', 'Travel'].map(cat => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setActiveTab(cat)}
+                                        className={`px-5 py-2 rounded-full text-sm font-medium transition ${activeTab === cat ? 'bg-forest text-white shadow' : 'bg-white text-forest border border-gold/30 hover:bg-gold/10'}`}
+                                    >
+                                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Gallery Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {data.photos
+                                    .filter(p => activeTab === 'all' || p.category === activeTab)
+                                    .map(photo => (
+                                        <div 
+                                            key={photo.id} 
+                                            onClick={() => setLightboxPhoto(photo)}
+                                            className="group relative bg-white rounded-2xl overflow-hidden shadow-sm border border-gold/20 cursor-pointer hover:shadow-xl transition duration-300"
+                                        >
+                                            <div className="aspect-[4/5] w-full overflow-hidden bg-cream">
+                                                <img 
+                                                    src={photo.url} 
+                                                    alt={photo.caption} 
+                                                    className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500"
+                                                    onError={(e) => { e.target.src = "https://placehold.co/400x500/1E3A2F/D4AF37?text=Satyam+Rout"; }}
+                                                />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-t from-forest/80 via-transparent opacity-0 group-hover:opacity-150 transition duration-300 flex flex-col justify-end p-6 text-white">
+                                                <p className="font-serif text-lg font-bold">{photo.caption}</p>
+                                                <div className="flex items-center justify-between mt-1 text-xs text-gold">
+                                                    <span>{photo.category}</span>
+                                                    <span>{photo.date}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* About Me Section */}
+                    <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center space-y-6">
+                        <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Personality & Perspective</h2>
+                        <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">About Me</h3>
+                        <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                        <p className="text-lg text-warmgray font-light leading-relaxed max-w-3xl mx-auto">
+                            I am a passionate Aerospace Engineer driven by curiosity, precision, and dedication. Born in Rourkela and currently based in Bangalore working at Boeing India, I value intellectual growth, familial harmony, and cultural roots. In my spare time, I enjoy exploring ancient architecture, traveling, and staying balanced between modern technical pursuits and traditional values.
+                        </p>
+                    </section>
+
+                    {/* Contact & Social Profiles */}
+                    <section id="contact" className="py-20 bg-cream/60 border-t border-gold/20">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Get in Touch</h2>
+                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Connect & Inquire</h3>
+                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
+                                <p className="text-warmgray text-sm">We welcome correspondence from prospective families and relatives.</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                                {/* Left: Socials & Quick Actions */}
+                                <div className="space-y-8">
+                                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20 space-y-6">
+                                        <h4 className="font-serif text-2xl font-bold text-forest">Professional & Social Profiles</h4>
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer" className="flex-1 bg-cream hover:bg-gold/15 p-4 rounded-2xl border border-gold/30 flex items-center space-x-3 transition">
+                                                <div className="p-2.5 bg-forest text-gold rounded-xl">
+                                                    <Icon name="externalLink" className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-warmgray">Connect on</p>
+                                                    <p className="font-semibold text-forest text-sm">LinkedIn Profile</p>
+                                                </div>
+                                            </a>
+
+                                            <a href={data.contact.instagram} target="_blank" rel="noopener noreferrer" className="flex-1 bg-cream hover:bg-gold/15 p-4 rounded-2xl border border-gold/30 flex items-center space-x-3 transition">
+                                                <div className="p-2.5 bg-forest text-gold rounded-xl">
+                                                    <Icon name="camera" className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-xs text-warmgray">Follow on</p>
+                                                    <p className="font-semibold text-forest text-sm">Instagram Profile</p>
+                                                </div>
+                                            </a>
+                                        </div>
+
+                                        <div className="pt-4 border-t border-gold/20 flex flex-wrap gap-4">
+                                            <button onClick={copyWebsiteLink} className="flex-1 bg-forest hover:bg-forest-dark text-white px-5 py-3 rounded-xl font-medium text-sm flex items-center justify-center space-x-2 transition border border-gold/30">
+                                                <Icon name="share" className="w-4 h-4 text-gold" />
+                                                <span>Copy Website Link</span>
+                                            </button>
+                                            <button onClick={() => setIsPdfModalOpen(true)} className="flex-1 bg-gold hover:bg-gold-dark text-forest font-semibold px-5 py-3 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow">
+                                                <Icon name="download" className="w-4 h-4" />
+                                                <span>Download PDF Biodata</span>
+                                            </button>
+                                        </div>
+
+                                        {data.contact.showPhone && (
+                                            <div className="pt-4 border-t border-gold/25 flex items-center justify-between">
+                                                <div className="flex items-center space-x-3">
+                                                    <div className="p-2 bg-gold/15 rounded-full text-forest">
+                                                        <Icon name="phone" className="w-5 h-5 text-gold" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs text-warmgray">Direct Telephone</p>
+                                                        <p className="font-semibold text-forest">{data.contact.phone}</p>
+                                                    </div>
+                                                </div>
+                                                <a href={`tel:${data.contact.phone}`} className="bg-forest text-white px-4 py-2 rounded-xl text-xs font-medium">Call Now</a>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Right: Contact Form */}
+                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20">
+                                    <h4 className="font-serif text-2xl font-bold text-forest mb-2">Send a Family Inquiry</h4>
+                                    <p className="text-sm text-warmgray mb-6">Fill out this form to initiate conversation. All submissions are kept secure and confidential.</p>
+
+                                    <form onSubmit={handleContactSubmit} className="space-y-4">
+                                        <div>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Your Name / Family Representative</label>
+                                            <input 
+                                                type="text" 
+                                                required
+                                                value={contactForm.name} 
+                                                onChange={e => setContactForm({...contactForm, name: e.target.value})}
+                                                placeholder="Enter full name" 
+                                                className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-ivory focus:outline-none focus:ring-2 focus:ring-gold"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Contact Information (Phone / Email)</label>
+                                            <input 
+                                                type="text" 
+                                                required
+                                                value={contactForm.contact} 
+                                                onChange={e => setContactForm({...contactForm, contact: e.target.value})}
+                                                placeholder="Phone number or email" 
+                                                className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-ivory focus:outline-none focus:ring-2 focus:ring-gold"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Message / Proposal Details</label>
+                                            <textarea 
+                                                rows="4"
+                                                required
+                                                value={contactForm.message} 
+                                                onChange={e => setContactForm({...contactForm, message: e.target.value})}
+                                                placeholder="Write your message here..." 
+                                                className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-ivory focus:outline-none focus:ring-2 focus:ring-gold"
+                                            ></textarea>
+                                        </div>
+
+                                        <button type="submit" className="w-full bg-forest hover:bg-forest-dark text-white py-3.5 rounded-xl font-medium transition shadow flex items-center justify-center space-x-2 border border-gold/30">
+                                            <Icon name="mail" className="w-5 h-5 text-gold" />
+                                            <span>Send Inquiry</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Footer */}
+                    <footer className="bg-forest text-white py-12 border-t border-gold/30">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+                            <div>
+                                <p className="font-serif text-xl font-bold">Satyam Rout — Marriage Biodata</p>
+                                <p className="text-xs text-gold mt-1">Aerospace Engineer • System Engineer at Boeing India</p>
+                            </div>
+                            <div className="text-xs text-warmgray">
+                                &copy; 2026 Satyam Rout. All rights reserved. Built with privacy & elegance.
+                            </div>
+                        </div>
+                    </footer>
+
+                    {/* Lightbox Modal */}
+                    {lightboxPhoto && (
+                        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+                            <button 
+                                onClick={() => setLightboxPhoto(null)} 
+                                className="absolute top-6 right-6 text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition"
+                            >
+                                <Icon name="close" className="w-6 h-6" />
+                            </button>
+                            <div className="max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
+                                <img 
+                                    src={lightboxPhoto.url} 
+                                    alt={lightboxPhoto.caption} 
+                                    className="max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20"
+                                    onError={(e) => { e.target.src = "https://placehold.co/600x800/1E3A2F/D4AF37?text=Satyam+Rout"; }}
+                                />
+                                <div className="mt-4 text-center text-white">
+                                    <p className="font-serif text-2xl font-bold">{lightboxPhoto.caption}</p>
+                                    <p className="text-xs text-gold mt-1">{lightboxPhoto.category} • {lightboxPhoto.date}</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Printable Biodata PDF Modal */}
+                    {isPdfModalOpen && (
+                        <PdfModal data={data} profilePhoto={profilePhoto} onClose={() => setIsPdfModalOpen(false)} />
+                    )}
+
+                    {/* Admin Dashboard Modal */}
+                    {isAdminOpen && (
+                        <AdminModal data={data} setData={setData} onClose={() => setIsAdminOpen(false)} showToast={showToast} />
+                    )}
+                </div>
+            );
+        }
+
+        // Printable PDF Modal Component
+        function PdfModal({ data, profilePhoto, onClose }) {
+            const handlePrint = () => {
+                window.print();
+            };
+
+            return (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-ivory rounded-3xl max-w-4xl w-full max-h-[95vh] overflow-y-auto shadow-2xl border-2 border-gold relative my-8">
+                        <div className="sticky top-0 bg-forest text-white p-4 px-8 flex items-center justify-between z-10 border-b border-gold/30">
+                            <h3 className="font-serif text-xl font-bold">Printable Marriage Biodata (A4 Format)</h3>
+                            <div className="flex items-center space-x-3">
+                                <button onClick={handlePrint} className="bg-gold hover:bg-gold-dark text-forest font-semibold px-4 py-2 rounded-xl text-sm flex items-center space-x-2 transition shadow">
+                                    <Icon name="download" className="w-4 h-4" />
+                                    <span>Print / Save PDF</span>
+                                </button>
+                                <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
+                                    <Icon name="close" className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Printable Document Container */}
+                        <div id="printable-biodata" className="p-8 sm:p-12 bg-white text-forest space-y-8 font-sans">
+                            {/* Header */}
+                            <div className="text-center border-b-2 border-gold pb-6 space-y-2">
+                                <p className="text-xs tracking-widest uppercase text-gold font-semibold">|| Om Ganeshaya Namah ||</p>
+                                <h2 className="font-serif text-4xl font-bold text-forest">MARRIAGE BIODATA</h2>
+                                <p className="text-sm text-warmgray">Traditional & Professional Matrimonial Profile</p>
+                            </div>
+
+                            {/* Main Content Grid */}
+                            <div className="flex flex-col md:flex-row gap-8 items-start">
+                                <div className="w-full md:w-1/3 flex flex-col items-center space-y-4">
+                                    <div className="w-48 h-60 rounded-xl overflow-hidden border-2 border-gold shadow-md">
+                                        <img src={profilePhoto.url} alt="Profile" className="w-full h-full object-cover object-top" />
+                                    </div>
+                                    <div className="text-center">
+                                        <h3 className="font-serif text-2xl font-bold text-forest">{data.personal.fullName}</h3>
+                                        <p className="text-xs text-gold uppercase tracking-wider font-semibold mt-1">{data.education.designation}</p>
+                                    </div>
+                                </div>
+
+                                <div className="w-full md:w-2/3 space-y-6">
+                                    <div>
+                                        <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
+                                            <span className="w-2 h-2 rounded-full bg-gold"></span>
+                                            <span>Personal & Physical Details</span>
+                                        </h4>
+                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
+                                            <div><strong className="text-warmgray">Date of Birth:</strong></div><div>{data.personal.dob}</div>
+                                            <div><strong className="text-warmgray">Time of Birth:</strong></div><div>{data.personal.timeOfBirth}</div>
+                                            <div><strong className="text-warmgray">Place of Birth:</strong></div><div>{data.personal.placeOfBirth}</div>
+                                            <div><strong className="text-warmgray">Height:</strong></div><div>{data.personal.height}</div>
+                                            <div><strong className="text-warmgray">Blood Group:</strong></div><div>{data.personal.bloodGroup}</div>
+                                            <div><strong className="text-warmgray">Languages:</strong></div><div>{data.personal.languages}</div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
+                                            <span className="w-2 h-2 rounded-full bg-gold"></span>
+                                            <span>Religious & Astrological Details</span>
+                                        </h4>
+                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
+                                            <div><strong className="text-warmgray">Religion:</strong></div><div>{data.religious.religion}</div>
+                                            <div><strong className="text-warmgray">Caste:</strong></div><div>{data.religious.caste}</div>
+                                            <div><strong className="text-warmgray">Gothra:</strong></div><div>{data.religious.gothra}</div>
+                                            <div><strong className="text-warmgray">Rashi:</strong></div><div>{data.religious.rashi}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gold/20">
+                                <div>
+                                    <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
+                                        <span className="w-2 h-2 rounded-full bg-gold"></span>
+                                        <span>Education & Career</span>
+                                    </h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div><strong className="text-warmgray">Degree:</strong> {data.education.degree}</div>
+                                        <div><strong className="text-warmgray">College:</strong> {data.education.college}</div>
+                                        <div><strong className="text-warmgray">Current Role:</strong> {data.education.designation}</div>
+                                        <div><strong className="text-warmgray">Organization:</strong> {data.education.organization} ({data.education.location})</div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
+                                        <span className="w-2 h-2 rounded-full bg-gold"></span>
+                                        <span>Family Background</span>
+                                    </h4>
+                                    <div className="space-y-2 text-sm">
+                                        <div><strong className="text-warmgray">Father:</strong> {data.family.fatherName} ({data.family.fatherProf})</div>
+                                        <div><strong className="text-warmgray">Mother:</strong> {data.family.motherName} ({data.family.motherProf})</div>
+                                        <div><strong className="text-warmgray">Sibling:</strong> {data.family.sibling}</div>
+                                        <div><strong className="text-warmgray">Native Place:</strong> {data.family.native}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="pt-6 border-t border-gold/25 text-center text-xs text-warmgray">
+                                <p>Contact: {data.contact.phone} | Email: {data.contact.email}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        // Admin Dashboard Modal
+        function AdminModal({ data, setData, onClose, showToast }) {
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [passwordInput, setPasswordInput] = useState('');
+            const [activeSubTab, setActiveSubTab] = useState('biodata');
+            const [formData, setFormData] = useState(data);
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                if (passwordInput === 'Satyam2026@') {
+                    setIsAuthenticated(true);
+                    showToast("Admin access granted successfully!");
+                } else {
+                    showToast("Incorrect password. Default is Satyam2026@");
+                }
+            };
+
+            const handleSave = () => {
+                setData(formData);
+                showToast("All changes saved and published successfully!");
+                onClose();
+            };
+
+            const handleAddPhoto = (e) => {
+                e.preventDefault();
+                const url = e.target.photoUrl.value;
+                const caption = e.target.photoCaption.value;
+                const category = e.target.photoCategory.value;
+                if (!url) return;
+
+                const newPhoto = {
+                    id: Date.now(),
+                    url,
+                    caption: caption || 'New Photo',
+                    category: category || 'Portrait',
+                    date: new Date().toISOString().split('T')[0],
+                    isProfile: false
+                };
+
+                setFormData({
+                    ...formData,
+                    photos: [newPhoto, ...formData.photos]
+                });
+                e.target.reset();
+                showToast("New photo added successfully!");
+            };
+
+            const handleDeletePhoto = (id) => {
+                setFormData({
+                    ...formData,
+                    photos: formData.photos.filter(p => p.id !== id)
+                });
+                showToast("Photo removed.");
+            };
+
+            const handleSetProfilePhoto = (id) => {
+                setFormData({
+                    ...formData,
+                    photos: formData.photos.map(p => ({
+                        ...p,
+                        isProfile: p.id === id
+                    }))
+                });
+                showToast("Main profile photo updated!");
+            };
+
+            if (!isAuthenticated) {
+                return (
+                    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                        <div className="bg-ivory rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gold relative space-y-6">
+                            <button onClick={onClose} className="absolute top-4 right-4 text-warmgray hover:text-forest">
+                                <Icon name="close" className="w-5 h-5" />
+                            </button>
+                            <div className="text-center space-y-2">
+                                <div className="w-14 h-14 bg-forest text-gold rounded-full flex items-center justify-center mx-auto shadow-inner">
+                                    <Icon name="lock" className="w-6 h-6" />
+                                </div>
+                                <h3 className="font-serif text-2xl font-bold text-forest">Admin Dashboard Login</h3>
+                                <p className="text-xs text-warmgray">Enter password to manage website details & photos.</p>
+                            </div>
+
+                            <form onSubmit={handleLogin} className="space-y-4">
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Admin Password</label>
+                                    <input 
+                                        type="password" 
+                                        required
+                                        value={passwordInput}
+                                        onChange={e => setPasswordInput(e.target.value)}
+                                        placeholder="Enter password"
+                                        className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-white focus:outline-none focus:ring-2 focus:ring-gold"
+                                    />
+                                    <p className="text-[11px] text-warmgray mt-1">Default PIN: <code className="bg-gold/20 px-1 py-0.5 rounded font-mono">Satyam2026@</code></p>
+                                </div>
+                                <button type="submit" className="w-full bg-forest hover:bg-forest-dark text-white py-3 rounded-xl font-medium transition shadow border border-gold/30">
+                                    Authenticate
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-ivory rounded-3xl max-w-5xl w-full max-h-[95vh] overflow-y-auto shadow-2xl border-2 border-gold relative my-8 flex flex-col">
+                        {/* Admin Header */}
+                        <div className="sticky top-0 bg-forest text-white p-4 px-8 flex items-center justify-between z-10 border-b border-gold/30">
+                            <div className="flex items-center space-x-3">
+                                <Icon name="settings" className="w-6 h-6 text-gold" />
+                                <h3 className="font-serif text-xl font-bold">Admin Management Dashboard</h3>
+                            </div>
+                            <div className="flex items-center space-x-3">
+                                <button onClick={handleSave} className="bg-gold hover:bg-gold-dark text-forest font-semibold px-5 py-2 rounded-xl text-sm flex items-center space-x-2 transition shadow">
+                                    <Icon name="check" className="w-4 h-4" />
+                                    <span>Save & Publish</span>
+                                </button>
+                                <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
+                                    <Icon name="close" className="w-5 h-5" />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Admin Subtabs */}
+                        <div className="bg-cream border-b border-gold/20 px-8 py-3 flex space-x-4">
+                            <button 
+                                onClick={() => setActiveSubTab('biodata')}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition ${activeSubTab === 'biodata' ? 'bg-forest text-white shadow' : 'text-forest hover:bg-gold/10'}`}
+                            >
+                                Edit Biodata Details
+                            </button>
+                            <button 
+                                onClick={() => setActiveSubTab('photos')}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition ${activeSubTab === 'photos' ? 'bg-forest text-white shadow' : 'text-forest hover:bg-gold/10'}`}
+                            >
+                                Manage Photo Gallery
+                            </button>
+                            <button 
+                                onClick={() => setActiveSubTab('privacy')}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition ${activeSubTab === 'privacy' ? 'bg-forest text-white shadow' : 'text-forest hover:bg-gold/10'}`}
+                            >
+                                Privacy & Contact Settings
+                            </button>
+                        </div>
+
+                        {/* Admin Content Area */}
+                        <div className="p-8 space-y-8 flex-1">
+                            {activeSubTab === 'biodata' && (
+                                <div className="space-y-8">
+                                    {/* Personal Details */}
+                                    <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
+                                        <h4 className="font-serif text-xl font-bold text-forest">Personal & Physical Information</h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Full Name</label>
+                                                <input type="text" value={formData.personal.fullName} onChange={e => setFormData({...formData, personal: {...formData.personal, fullName: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Date of Birth</label>
+                                                <input type="text" value={formData.personal.dob} onChange={e => setFormData({...formData, personal: {...formData.personal, dob: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Time of Birth</label>
+                                                <input type="text" value={formData.personal.timeOfBirth} onChange={e => setFormData({...formData, personal: {...formData.personal, timeOfBirth: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Place of Birth</label>
+                                                <input type="text" value={formData.personal.placeOfBirth} onChange={e => setFormData({...formData, personal: {...formData.personal, placeOfBirth: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Height</label>
+                                                <input type="text" value={formData.personal.height} onChange={e => setFormData({...formData, personal: {...formData.personal, height: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Blood Group</label>
+                                                <input type="text" value={formData.personal.bloodGroup} onChange={e => setFormData({...formData, personal: {...formData.personal, bloodGroup: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Education & Career */}
+                                    <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
+                                        <h4 className="font-serif text-xl font-bold text-forest">Education & Professional Details</h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Degree</label>
+                                                <input type="text" value={formData.education.degree} onChange={e => setFormData({...formData, education: {...formData.education, degree: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">College / University</label>
+                                                <input type="text" value={formData.education.college} onChange={e => setFormData({...formData, education: {...formData.education, college: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Current Designation</label>
+                                                <input type="text" value={formData.education.designation} onChange={e => setFormData({...formData, education: {...formData.education, designation: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Organization</label>
+                                                <input type="text" value={formData.education.organization} onChange={e => setFormData({...formData, education: {...formData.education, organization: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeSubTab === 'photos' && (
+                                <div className="space-y-8">
+                                    {/* Add Photo Form */}
+                                    <form onSubmit={handleAddPhoto} className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
+                                        <h4 className="font-serif text-xl font-bold text-forest">Add New Photograph</h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Image URL / Filename</label>
+                                                <input type="text" name="photoUrl" required placeholder="e.g. https://... or photo.jpg" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Caption</label>
+                                                <input type="text" name="photoCaption" placeholder="Photo caption" className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                            </div>
+                                            <div>
+                                                <label className="block text-xs font-semibold text-warmgray mb-1">Category</label>
+                                                <select name="photoCategory" className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
+                                                    <option value="Portrait">Portrait</option>
+                                                    <option value="Traditional">Traditional</option>
+                                                    <option value="Travel">Travel</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <button type="submit" className="bg-forest hover:bg-forest-dark text-white px-5 py-2 rounded-xl text-sm font-medium transition">
+                                            Add Photo to Gallery
+                                        </button>
+                                    </form>
+
+                                    {/* Photo List */}
+                                    <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
+                                        <h4 className="font-serif text-xl font-bold text-forest">Manage Existing Photos</h4>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                            {formData.photos.map(photo => (
+                                                <div key={photo.id} className="border rounded-xl p-3 flex flex-col space-y-3 bg-cream/40">
+                                                    <div className="h-40 rounded-lg overflow-hidden bg-white">
+                                                        <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" onError={(e)=>{e.target.src="https://placehold.co/300x300/1E3A2F/D4AF37?text=Image"}} />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold text-sm">{photo.caption}</p>
+                                                        <p className="text-xs text-warmgray">{photo.category} {photo.isProfile && <span className="text-gold font-bold">• Main Profile</span>}</p>
+                                                    </div>
+                                                    <div className="flex items-center justify-between pt-2 border-t border-gold/20">
+                                                        {!photo.isProfile && (
+                                                            <button onClick={() => handleSetProfilePhoto(photo.id)} className="text-xs text-forest font-semibold hover:underline">
+                                                                Set as Profile
+                                                            </button>
+                                                        )}
+                                                        <button onClick={() => handleDeletePhoto(photo.id)} className="text-xs text-red-600 font-semibold flex items-center space-x-1">
+                                                            <Icon name="trash" className="w-3.5 h-3.5" />
+                                                            <span>Delete</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeSubTab === 'privacy' && (
+                                <div className="space-y-6 bg-white p-6 rounded-2xl border border-gold/20 shadow-sm">
+                                    <h4 className="font-serif text-xl font-bold text-forest">Contact Visibility & Privacy</h4>
+                                    <div className="space-y-4">
+                                        <label className="flex items-center space-x-3 cursor-pointer">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={formData.contact.showPhone}
+                                                onChange={e => setFormData({...formData, contact: {...formData.contact, showPhone: e.target.checked}})}
+                                                className="w-5 h-5 text-forest rounded border-gold focus:ring-gold"
+                                            />
+                                            <span className="text-sm font-medium text-forest">Display phone number publicly on website</span>
+                                        </label>
+
+                                        <label className="flex items-center space-x-3 cursor-pointer">
+                                            <input 
+                                                type="checkbox" 
+                                                checked={formData.contact.showAddress}
+                                                onChange={e => setFormData({...formData, contact: {...formData.contact, showAddress: e.target.checked}})}
+                                                className="w-5 h-5 text-forest rounded border-gold focus:ring-gold"
+                                            />
+                                            <span className="text-sm font-medium text-forest">Display exact residential address publicly</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
