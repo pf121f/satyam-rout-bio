@@ -48,38 +48,103 @@
         .font-serif {
             font-family: '"Cormorant Garamond"', serif;
         }
+        /* Screen layout is unchanged. These rules apply only to printing. */
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
         @media print {
-            @page {
-                size: A4 portrait;
-                margin: 12mm;
-            }
-            body, html {
-                background: #FFFFFF;
-                color: #1E3A2F;
-                height: auto;
-            }
-            body * {
-                visibility: hidden;
-            }
-            #printable-biodata, #printable-biodata * {
-                visibility: visible;
-            }
-            #printable-biodata {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-                background: #FFFFFF;
+            html, body {
+                width: auto !important;
+                min-height: 0 !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                overflow: visible !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
-                box-shadow: none;
-                border: none;
             }
-            /* Hide modal wrappers, navigation, and buttons during print */
-            .fixed, nav, footer, button, .sticky {
-                display: none;
+            /* Remove the full website from print layout; visibility:hidden alone
+               still reserves its space and can create many blank pages. */
+            body > #root {
+                display: none !important;
+            }
+            body * {
+                visibility: hidden !important;
+            }
+            #pdf-print-root,
+            #pdf-print-root * {
+                visibility: visible !important;
+            }
+            #pdf-print-root {
+                display: block !important;
+                position: static !important;
+                inset: auto !important;
+                width: 100% !important;
+                max-width: none !important;
+                height: auto !important;
+                max-height: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+                color: #1E3A2F !important;
+                box-sizing: border-box !important;
+            }
+            #pdf-print-root #printable-biodata {
+                display: block !important;
+                position: static !important;
+                inset: auto !important;
+                width: 100% !important;
+                max-width: none !important;
+                height: auto !important;
+                max-height: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+                color: #1E3A2F !important;
+                box-shadow: none !important;
+                border: 0 !important;
+                transform: none !important;
+            }
+            #pdf-print-root img {
+                max-width: 100% !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            #pdf-print-root h2,
+            #pdf-print-root h3,
+            #pdf-print-root h4 {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
+            #pdf-print-root .flex,
+            #pdf-print-root .grid {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            #pdf-print-root #printable-biodata {
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                min-height: 277mm !important;
+                padding: 4mm !important;
+                border: 1px solid #D4AF37 !important;
+                border-radius: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+                font-size: 10px !important;
+            }
+            #pdf-print-root #printable-biodata * { box-sizing: border-box; }
+            #pdf-print-root #printable-biodata img { height: 68mm !important; width: 52mm !important; min-height: 68mm !important; min-width: 52mm !important; object-fit: cover !important; }
+            #pdf-print-root #printable-biodata h2 { font-size: 22px !important; }
+            #pdf-print-root #printable-biodata h4 { font-size: 11px !important; }
+            #pdf-print-root #printable-biodata > div { break-inside: avoid; page-break-inside: avoid; }
+
+            #pdf-print-root * {
+                box-sizing: border-box !important;
             }
         }
     </style>
@@ -886,8 +951,44 @@
 
         // Printable PDF Modal Component
         function PdfModal({ data, profilePhoto, onClose }) {
-            const handlePrint = () => {
+            const handlePrint = async () => {
+                const source = document.getElementById('printable-biodata');
+                if (!source) {
+                    console.error('PDF print failed: #printable-biodata was not found.');
+                    alert('Could not find the biodata to print. Please close and reopen the PDF preview.');
+                    return;
+                }
+
+                // Print a temporary copy directly under <body>. This prevents the
+                // modal's overflow/max-height styles from clipping the PDF content.
+                const oldPrintRoot = document.getElementById('pdf-print-root');
+                if (oldPrintRoot) oldPrintRoot.remove();
+
+                const printRoot = document.createElement('div');
+                printRoot.id = 'pdf-print-root';
+                const printableCopy = source.cloneNode(true);
+                printableCopy.id = 'printable-biodata';
+                printRoot.appendChild(printableCopy);
+                document.body.appendChild(printRoot);
+
+                // Wait for cloned images to load before opening the print dialog.
+                const images = Array.from(printRoot.querySelectorAll('img'));
+                await Promise.all(images.map((img) => {
+                    if (img.complete) return Promise.resolve();
+                    return new Promise((resolve) => {
+                        img.addEventListener('load', resolve, { once: true });
+                        img.addEventListener('error', resolve, { once: true });
+                    });
+                }));
+
+                const cleanup = () => {
+                    printRoot.remove();
+                    window.removeEventListener('afterprint', cleanup);
+                };
+                window.addEventListener('afterprint', cleanup, { once: true });
                 window.print();
+                // Fallback cleanup for browsers that do not fire afterprint.
+                window.setTimeout(cleanup, 60000);
             };
 
             return (
@@ -907,89 +1008,40 @@
                         </div>
 
                         {/* Printable Document Container */}
-                        <div id="printable-biodata" className="p-8 sm:p-12 bg-white text-forest space-y-8 font-sans">
-                            {/* Header */}
-                            <div className="text-center border-b-2 border-gold pb-6 space-y-2">
-                                <p className="text-xs tracking-widest uppercase text-gold font-semibold">|| Om Ganeshaya Namah ||</p>
-                                <h2 className="font-serif text-4xl font-bold text-forest">MARRIAGE BIODATA</h2>
-                                <p className="text-sm text-warmgray">Traditional & Professional Matrimonial Profile</p>
+                        <div id="printable-biodata" className="bg-white text-forest font-sans" style={{padding:'22px', maxWidth:'680px', margin:'0 auto', border:'1px solid #D4AF37', borderRadius:'12px', color:'#1E3A2F'}}>
+                            <div style={{textAlign:'center', borderBottom:'2px solid #D4AF37', paddingBottom:'9px', marginBottom:'10px'}}>
+                                <div style={{fontSize:'10px', letterSpacing:'2px', color:'#B38F27', fontWeight:700}}>|| OM GANESHAYA NAMAH ||</div>
+                                <h2 style={{fontFamily:'Georgia,serif', fontSize:'25px', lineHeight:1.1, margin:'5px 0 3px', fontWeight:700, letterSpacing:'1px'}}>MARRIAGE BIODATA</h2>
+                                <div style={{fontSize:'10px', color:'#78716c', letterSpacing:'1px'}}>A PERSONAL & FAMILY PROFILE</div>
                             </div>
-
-                            {/* Main Content Grid */}
-                            <div className="flex flex-col md:flex-row gap-8 items-start">
-                                <div className="w-full md:w-1/3 flex flex-col items-center space-y-4">
-                                    <div className="w-48 h-60 rounded-xl overflow-hidden border-2 border-gold shadow-md">
-                                        <img src={profilePhoto?.url} alt="Profile" className="w-full h-full object-cover object-top" />
-                                    </div>
-                                    <div className="text-center">
-                                        <h3 className="font-serif text-2xl font-bold text-forest">{data.personal.fullName}</h3>
-                                        <p className="text-xs text-gold uppercase tracking-wider font-semibold mt-1">{data.education.designation}</p>
-                                    </div>
-                                </div>
-
-                                <div className="w-full md:w-2/3 space-y-6">
-                                    <div>
-                                        <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                            <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                            <span>Personal & Physical Details</span>
-                                        </h4>
-                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                            <div><strong className="text-warmgray">Date of Birth:</strong></div><div>{data.personal.dob}</div>
-                                            <div><strong className="text-warmgray">Time of Birth:</strong></div><div>{data.personal.timeOfBirth}</div>
-                                            <div><strong className="text-warmgray">Place of Birth:</strong></div><div>{data.personal.placeOfBirth}</div>
-                                            <div><strong className="text-warmgray">Height:</strong></div><div>{data.personal.height}</div>
-                                            <div><strong className="text-warmgray">Blood Group:</strong></div><div>{data.personal.bloodGroup}</div>
-                                            <div><strong className="text-warmgray">Languages:</strong></div><div>{data.personal.languages}</div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                            <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                            <span>Religious & Astrological Details</span>
-                                        </h4>
-                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                            <div><strong className="text-warmgray">Religion:</strong></div><div>{data.religious.religion}</div>
-                                            <div><strong className="text-warmgray">Caste:</strong></div><div>{data.religious.caste}</div>
-                                            <div><strong className="text-warmgray">Gothra:</strong></div><div>{data.religious.gothra}</div>
-                                            <div><strong className="text-warmgray">Rashi:</strong></div><div>{data.religious.rashi}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gold/20">
+                            <div style={{display:'flex', alignItems:'center', justifyContent:'center', gap:'15px', marginBottom:'10px', textAlign:'left'}}>
+                                <img src={profilePhoto?.url} alt="Satyam Rout" style={{width:'52mm', height:'68mm', objectFit:'cover', objectPosition:'top', border:'2px solid #D4AF37', borderRadius:'6px', display:'block', flexShrink:0}} />
                                 <div>
-                                    <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                        <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                        <span>Education & Career</span>
-                                    </h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div><strong className="text-warmgray">Degree:</strong> {data.education.degree}</div>
-                                        <div><strong className="text-warmgray">College:</strong> {data.education.college}</div>
-                                        <div><strong className="text-warmgray">Current Role:</strong> {data.education.designation}</div>
-                                        <div><strong className="text-warmgray">Organization:</strong> {data.education.organization} ({data.education.location})</div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                        <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                        <span>Family Background</span>
-                                    </h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div><strong className="text-warmgray">Father:</strong> {data.family.fatherName} ({data.family.fatherProf})</div>
-                                        <div><strong className="text-warmgray">Mother:</strong> {data.family.motherName} ({data.family.motherProf})</div>
-                                        <div><strong className="text-warmgray">Sibling:</strong> {data.family.sibling}</div>
-                                        <div><strong className="text-warmgray">Native Place:</strong> {data.family.native}</div>
-                                    </div>
+                                    <div style={{fontFamily:'Georgia,serif', fontWeight:700, fontSize:'23px', lineHeight:1.15}}>{data.personal.fullName}</div>
+                                    <div style={{fontSize:'11px', fontWeight:700, color:'#B38F27', marginTop:'5px'}}>{data.education.designation}</div>
+                                    <div style={{fontSize:'10px', color:'#78716c', marginTop:'2px'}}>{data.education.organization}</div>
+                                    <div style={{fontSize:'10px', color:'#78716c', marginTop:'3px'}}>Based in {data.education.location}</div>
                                 </div>
                             </div>
-
-                            <div className="pt-6 border-t border-gold/25 text-center text-xs text-warmgray space-y-1">
-                                {data.contact.showPhone && <p><strong className="text-forest">Phone:</strong> {data.contact.phone}</p>}
-                                <p><strong className="text-forest">Email:</strong> {data.contact.email}</p>
-                                {data.contact.showAddress && data.family?.native && <p><strong className="text-forest">Address:</strong> {data.family.native}</p>}
+                            <div style={{borderTop:'1px solid #e8dfc5', paddingTop:'8px', marginBottom:'8px'}}>
+                                <h4 style={{fontFamily:'Georgia,serif', fontSize:'13px', fontWeight:700, borderBottom:'1px solid #D4AF37', paddingBottom:'4px', margin:'0 0 6px'}}>PERSONAL DETAILS</h4>
+                                {[ ["Date of Birth",data.personal.dob], ["Time of Birth",data.personal.timeOfBirth], ["Place of Birth",data.personal.placeOfBirth], ["Height",data.personal.height], ["Blood Group",data.personal.bloodGroup], ["Languages",data.personal.languages] ].map(([k,v]) => <div key={k} style={{display:'grid',gridTemplateColumns:'125px 1fr',gap:'7px',fontSize:'10px',lineHeight:1.3,marginBottom:'3px'}}><strong style={{color:'#78716c'}}>{k}</strong><span>{v || '—'}</span></div>)}
+                            </div>
+                            <div style={{borderTop:'1px solid #e8dfc5', paddingTop:'8px', marginBottom:'8px'}}>
+                                <h4 style={{fontFamily:'Georgia,serif', fontSize:'13px', fontWeight:700, borderBottom:'1px solid #D4AF37', paddingBottom:'4px', margin:'0 0 6px'}}>RELIGIOUS DETAILS</h4>
+                                {[ ["Religion",data.religious.religion], ["Caste",data.religious.caste], ["Gothra",data.religious.gothra], ["Rashi",data.religious.rashi] ].map(([k,v]) => <div key={k} style={{display:'grid',gridTemplateColumns:'125px 1fr',gap:'7px',fontSize:'10px',lineHeight:1.3,marginBottom:'3px'}}><strong style={{color:'#78716c'}}>{k}</strong><span>{v || '—'}</span></div>)}
+                            </div>
+                            <div style={{borderTop:'1px solid #e8dfc5', paddingTop:'8px', marginBottom:'8px'}}>
+                                <h4 style={{fontFamily:'Georgia,serif', fontSize:'13px', fontWeight:700, borderBottom:'1px solid #D4AF37', paddingBottom:'4px', margin:'0 0 6px'}}>EDUCATION & CAREER</h4>
+                                {[ ["Degree",data.education.degree], ["College",data.education.college], ["Role",data.education.designation], ["Organization",data.education.organization], ["Work Location",data.education.location] ].map(([k,v]) => <div key={k} style={{display:'grid',gridTemplateColumns:'125px 1fr',gap:'7px',fontSize:'10px',lineHeight:1.3,marginBottom:'3px'}}><strong style={{color:'#78716c'}}>{k}</strong><span>{v || '—'}</span></div>)}
+                            </div>
+                            <div style={{borderTop:'1px solid #e8dfc5', paddingTop:'8px', marginBottom:'8px'}}>
+                                <h4 style={{fontFamily:'Georgia,serif', fontSize:'13px', fontWeight:700, borderBottom:'1px solid #D4AF37', paddingBottom:'4px', margin:'0 0 6px'}}>FAMILY BACKGROUND</h4>
+                                {[ ["Father",`${data.family.fatherName}${data.family.fatherProf ? ' — '+data.family.fatherProf : ''}`], ["Mother",`${data.family.motherName}${data.family.motherProf ? ' — '+data.family.motherProf : ''}`], ["Sibling",data.family.sibling], ["Native Place",data.family.native] ].map(([k,v]) => <div key={k} style={{display:'grid',gridTemplateColumns:'125px 1fr',gap:'7px',fontSize:'10px',lineHeight:1.3,marginBottom:'3px'}}><strong style={{color:'#78716c'}}>{k}</strong><span>{v || '—'}</span></div>)}
+                            </div>
+                            <div style={{marginTop:'9px', paddingTop:'8px', borderTop:'2px solid #D4AF37', textAlign:'center', fontSize:'10px', lineHeight:1.4}}>
+                                <strong>CONTACT</strong> &nbsp; {data.contact.showPhone !== false ? data.contact.phone : ''}{data.contact.showPhone !== false && data.contact.email ? '  |  ' : ''}{data.contact.email}
+                                <div style={{fontSize:'8px', color:'#78716c', marginTop:'3px'}}>With best wishes from the Rout family</div>
                             </div>
                         </div>
                     </div>
