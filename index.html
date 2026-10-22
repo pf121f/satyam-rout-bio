@@ -1120,7 +1120,7 @@
                 setIsUploadingPhoto(true);
                 try {
                     const fileExt = fileInput.name.split('.').pop();
-                    const fileName = `${Date.now()}_${Math.random().toString(36.substring(2, 7))}.${fileExt}`;
+                    const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
                     const filePath = `${fileName}`;
 
                     // Upload file to Supabase Storage Bucket 'biodata-media'
