@@ -49,6 +49,15 @@
             font-family: '"Cormorant Garamond"', serif;
         }
         @media print {
+            @page {
+                size: A4 portrait;
+                margin: 12mm;
+            }
+            body, html {
+                background: #FFFFFF;
+                color: #1E3A2F;
+                height: auto;
+            }
             body * {
                 visibility: hidden;
             }
@@ -61,8 +70,16 @@
                 top: 0;
                 width: 100%;
                 margin: 0;
-                padding: 20px;
-                background: white !important;
+                padding: 0;
+                background: #FFFFFF;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                box-shadow: none;
+                border: none;
+            }
+            /* Hide modal wrappers, navigation, and buttons during print */
+            .fixed, nav, footer, button, .sticky {
+                display: none;
             }
         }
     </style>
@@ -969,8 +986,10 @@
                                 </div>
                             </div>
 
-                            <div className="pt-6 border-t border-gold/25 text-center text-xs text-warmgray">
-                                <p>Contact: {data.contact.phone} | Email: {data.contact.email}</p>
+                            <div className="pt-6 border-t border-gold/25 text-center text-xs text-warmgray space-y-1">
+                                {data.contact.showPhone && <p><strong className="text-forest">Phone:</strong> {data.contact.phone}</p>}
+                                <p><strong className="text-forest">Email:</strong> {data.contact.email}</p>
+                                {data.contact.showAddress && data.family?.native && <p><strong className="text-forest">Address:</strong> {data.family.native}</p>}
                             </div>
                         </div>
                     </div>
