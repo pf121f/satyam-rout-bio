@@ -74,10 +74,10 @@
         const { useState, useEffect, useRef } = React;
 
         // ==========================================
-        // SUPABASE CONFIGURATION
+        // SUPABASE CONFIGURATION (Clean Base URL)
         // ==========================================
-        const SUPABASE_URL = 'https://vlidqemgoetqbkfxhiuw.supabase.co'; // Replace with your Supabase Project URL
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsaWRxZW1nb2V0cWJrZnhoaXV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Mjk4NTUsImV4cCI6MjEwODIwNTg1NX0.rBDQ7_1tm_ctErSOR_92qJ5iCgMgEbPkXKCyWnggc0w'; // Replace with your Supabase Anon/Publishable Key
+        const SUPABASE_URL = 'https://vlidqemgoetqbkfxhiuw.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsaWRxZW1nb2V0cWJrZnhoaXV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Mjk4NTUsImV4cCI6MjEwODIwNTg1NX0.rBDQ7_1tm_ctErSOR_92qJ5iCgMgEbPkXKCyWnggc0w';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -1060,8 +1060,13 @@
 
             const handleSave = async () => {
                 try {
+                    // Fetch existing record ID for reliable upsert
+                    const { data: existing } = await supabase.from('biodata_profiles').select('id').limit(1).single();
+                    const profileId = existing ? existing.id : undefined;
+
                     // Update biodata profile in Supabase
                     const { error: bioError } = await supabase.from('biodata_profiles').upsert({
+                        ...(profileId ? { id: profileId } : {}),
                         full_name: formData.personal.fullName,
                         dob: formData.personal.dob,
                         time_of_birth: formData.personal.timeOfBirth,
@@ -1188,9 +1193,7 @@
 
             const handleSetProfilePhoto = async (id) => {
                 try {
-                    // Reset all to is_profile = false
                     await supabase.from('gallery_photos').update({ is_profile: false }).neq('id', '00000000-0000-0000-0000-000000000000');
-                    // Set selected to is_profile = true
                     await supabase.from('gallery_photos').update({ is_profile: true }).eq('id', id);
 
                     setFormData({
