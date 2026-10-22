@@ -1,1184 +1,823 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satyam Rout | Marriage Biodata & Portfolio</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Playfair Display & Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <!-- Babel for JSX compilation -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        ivory: '#FDFBF7',
-                        cream: '#F7F4EB',
-                        gold: '#D4AF37',
-                        'gold-dark': '#B38F27',
-                        forest: '#1E3A2F',
-                        'forest-dark': '#13261E',
-                        maroon: '#6A1B29',
-                        warmgray: '#78716c'
-                    },
-                    fontFamily: {
-                        serif: ['"Cormorant Garamond"', 'serif'],
-                        sans: ['Inter', 'sans-serif']
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satyam Rout | Marriage Biodata</title>
+  <meta name="description" content="Personal marriage biodata and portfolio website for Satyam Rout.">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- html2pdf JS for PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Google Fonts for Odia & Elegant Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Oriya:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: '#FAF7F2',
+            ivory: '#FFFDF9',
+            emerald: {
+              900: '#0F2C23',
+              800: '#173E32',
+              700: '#215243',
+            },
+            gold: {
+              500: '#C5A059',
+              600: '#B08B46',
             }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            odia: ['"Noto Sans Oriya"', 'sans-serif'],
+          }
         }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFBF7;
-            color: #1E3A2F;
-        }
-        .font-serif {
-            font-family: '"Cormorant Garamond"', serif;
-        }
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #printable-biodata, #printable-biodata * {
-                visibility: visible;
-            }
-            #printable-biodata {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                margin: 0;
-                padding: 20px;
-                background: white !important;
-            }
-        }
-    </style>
+      }
+    }
+  </script>
 </head>
-<body class="bg-ivory text-forest min-h-screen selection:bg-gold selection:text-white">
-    <div id="root"></div>
+<body class="bg-cream text-emerald-900 font-sans antialiased selection:bg-gold-500 selection:text-white">
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+  <!-- Header Navigation -->
+  <nav class="sticky top-0 z-40 bg-ivory/90 backdrop-blur-md border-b border-gold-500/20 px-6 py-4 transition-all">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <a href="#" class="font-serif text-2xl font-bold tracking-wide text-emerald-900">Satyam Rout</a>
+      <div class="hidden md:flex space-x-6 text-sm font-medium">
+        <a href="#about" class="hover:text-gold-600 transition">About</a>
+        <a href="#biodata" class="hover:text-gold-600 transition">Biodata</a>
+        <a href="#family" class="hover:text-gold-600 transition">Family</a>
+        <a href="#gallery" class="hover:text-gold-600 transition">Gallery</a>
+        <a href="#contact" class="hover:text-gold-600 transition">Contact</a>
+      </div>
+      <button onclick="openAdminModal()" class="text-xs bg-emerald-900 text-ivory px-3 py-1.5 rounded-full border border-gold-500/30 hover:bg-gold-600 transition">
+        Admin Portal
+      </button>
+    </div>
+  </nav>
 
-        // SVG Icon Components
-        const Icon = ({ name, className = "w-5 h-5", ...props }) => {
-            const icons = {
-                user: <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>,
-                userCircle: <g><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3"></circle><path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"></path></g>,
-                calendar: <g><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></g>,
-                clock: <g><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></g>,
-                mapPin: <g><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></g>,
-                ruler: <g><path d="M2 12h20"></path><path d="M6 16v-8"></path><path d="M10 16v-6"></path><path d="M14 16v-8"></path><path d="M18 16v-6"></path></g>,
-                heart: <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>,
-                bookOpen: <g><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></g>,
-                briefcase: <g><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></g>,
-                users: <g><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></g>,
-                phone: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>,
-                mail: <g><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></g>,
-                share: <g><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></g>,
-                download: <g><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></g>,
-                shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>,
-                lock: <g><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></g>,
-                camera: <g><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></g>,
-                check: <polyline points="20 6 9 17 4 12"></polyline>,
-                externalLink: <g><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></g>,
-                close: <g><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></g>,
-                menu: <g><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></g>,
-                edit: <g><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></g>,
-                plus: <g><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></g>,
-                trash: <g><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></g>,
-                settings: <g><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></g>,
-                refresh: <g><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></g>
-            };
+  <!-- Hero Section -->
+  <section class="min-h-[85vh] flex items-center justify-center relative px-6 py-12">
+    <div class="max-w-4xl mx-auto text-center space-y-6">
+      <div class="relative inline-block">
+        <img id="main-profile-img" src="https://via.placeholder.com/200" alt="Satyam Rout Profile" class="w-44 h-44 md:w-52 md:h-52 rounded-full object-cover border-4 border-gold-500 shadow-xl mx-auto">
+      </div>
+      <span class="block text-xs uppercase tracking-widest text-gold-600 font-bold">Marriage Biodata</span>
+      <h1 class="text-4xl md:text-6xl font-serif font-bold text-emerald-900">Satyam Rout</h1>
+      <p id="bio-about-hero" class="text-base md:text-lg text-emerald-800/80 max-w-xl mx-auto">
+        A little introduction to my life, family, education, and aspirations.
+      </p>
+      <div class="flex flex-wrap justify-center gap-4 pt-4">
+        <a href="#biodata" class="bg-emerald-900 text-ivory px-6 py-3 rounded-full font-medium shadow-md hover:bg-emerald-800 transition">View Biodata</a>
+        <button onclick="generateBiodataPDF()" class="bg-gold-500 text-white px-6 py-3 rounded-full font-medium shadow-md hover:bg-gold-600 transition flex items-center gap-2">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z"/></svg>
+          Download PDF
+        </button>
+      </div>
+    </div>
+  </section>
 
-            return (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
-                    {icons[name] || icons.user}
-                </svg>
-            );
-        };
+  <!-- Biodata Section -->
+  <section id="biodata" class="py-16 px-6 bg-ivory border-y border-gold-500/10">
+    <div class="max-w-5xl mx-auto space-y-12">
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-serif font-bold text-emerald-900">Personal & Astro Details</h2>
+        <div class="w-16 h-1 bg-gold-500 mx-auto rounded-full"></div>
+      </div>
 
-        // Initial Data Structure
-        const initialData = {
-            personal: {
-                fullName: "Satyam Rout",
-                dob: "16 October 1999",
-                timeOfBirth: "9:47 AM",
-                placeOfBirth: "Rourkela, Odisha",
-                height: "5 feet 8 inches (172 cm)",
-                bloodGroup: "B Positive",
-                languages: "English, Odia, Hindi"
-            },
-            religious: {
-                religion: "Hindu",
-                caste: "ଖଣ୍ଡାୟତ (Khandayat)",
-                gothra: "ମୁଦଗଲସ୍ୟ (Mudgalasya)",
-                rashi: "Sagittarius / ଧନୁ (Dhanu)"
-            },
-            education: {
-                degree: "Bachelor of Technology in Aerospace Engineering",
-                college: "Hindustan University",
-                designation: "System Engineer",
-                organization: "Boeing India Private Limited",
-                location: "Bangalore, India"
-            },
-            family: {
-                fatherName: "Ashok Kumar Rout",
-                fatherProf: "Fitter at L&T, Kansbahal",
-                motherName: "Sanjukta Rout",
-                motherProf: "Homemaker",
-                sibling: "One younger sister (MSc final year student, Unmarried)",
-                native: "Rajkanika, Kendrapada, Odisha"
-            },
-            contact: {
-                phone: "+91 98765 43210",
-                email: "satyam.rout@example.com",
-                linkedin: "https://www.linkedin.com/in/satyam-rout-339ba2162?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-                instagram: "https://www.instagram.com/p_e_ace_/",
-                showPhone: true,
-                showAddress: false
-            },
-            photos: [
-                { id: 1, url: "IMG-20260824-WA0003.jpg.jpg", caption: "Professional Portrait", category: "Portrait", date: "2026-08-24", isProfile: true },
-                { id: 2, url: "IMG-20260824-WA0004.jpg.jpeg", caption: "Traditional Kurta Look", category: "Traditional", date: "2026-08-24", isProfile: false },
-                { id: 3, url: "IMG-20260825-WA0003.jpg.jpeg", caption: "Temple Visit, Karnataka", category: "Travel", date: "2026-08-25", isProfile: false },
-                { id: 4, url: "file_000000009cdc8208adf68cc56e0269eb~2.jpg.jpg", caption: "Scenic River Walk", category: "Travel", date: "2026-08-20", isProfile: false },
-                { id: 5, url: "WhatsApp Image 2026-10-20 at 12.47.39.jpeg", caption: "Sunset View at Riverbank", category: "Travel", date: "2026-10-20", isProfile: false }
-            ]
-        };
+      <div class="grid md:grid-cols-2 gap-8">
+        <!-- Card 1: Personal Details -->
+        <div class="bg-cream p-6 md:p-8 rounded-2xl border border-gold-500/20 shadow-sm space-y-4">
+          <h3 class="font-serif text-xl font-bold text-emerald-900 border-b border-gold-500/20 pb-3">Personal & Physical</h3>
+          <dl class="space-y-3 text-sm">
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Full Name:</dt><dd class="font-semibold text-emerald-900" id="bio-fullname">Satyam Rout</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Date of Birth:</dt><dd class="font-semibold text-emerald-900" id="bio-dob">16 October 1999</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Time of Birth:</dt><dd class="font-semibold text-emerald-900" id="bio-tob">9:47 AM</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Place of Birth:</dt><dd class="font-semibold text-emerald-900" id="bio-pob">Rourkela, Odisha</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Height:</dt><dd class="font-semibold text-emerald-900" id="bio-height">5' 8" (172 cm)</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Blood Group:</dt><dd class="font-semibold text-emerald-900" id="bio-blood">B Positive</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Languages:</dt><dd class="font-semibold text-emerald-900" id="bio-languages">English, Odia, Hindi</dd></div>
+            <div id="public-phone-container" class="hidden flex justify-between"><dt class="text-emerald-800/70">Contact:</dt><dd class="font-semibold text-emerald-900" id="bio-phone">-</dd></div>
+          </dl>
+        </div>
 
-        function App() {
-            // State Management with localStorage
-            const [data, setData] = useState(() => {
-                const saved = localStorage.getItem('satyam_biodata_data');
-                return saved ? JSON.parse(saved) : initialData;
-            });
+        <!-- Card 2: Religious & Education -->
+        <div class="bg-cream p-6 md:p-8 rounded-2xl border border-gold-500/20 shadow-sm space-y-4">
+          <h3 class="font-serif text-xl font-bold text-emerald-900 border-b border-gold-500/20 pb-3">Religious & Astro</h3>
+          <dl class="space-y-3 text-sm">
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Religion:</dt><dd class="font-semibold text-emerald-900" id="bio-religion">Hindu</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Caste:</dt><dd class="font-semibold text-emerald-900 font-odia" id="bio-caste">ଖଣ୍ଡାୟତ (Khandayat)</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Gothra:</dt><dd class="font-semibold text-emerald-900 font-odia" id="bio-gothra">ମୁଦଗଲସ୍ୟ (Mudgalasya)</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Rashi:</dt><dd class="font-semibold text-emerald-900 font-odia" id="bio-rashi">Sagittarius / ଧନୁ (Dhanu)</dd></div>
+          </dl>
 
-            useEffect(() => {
-                localStorage.setItem('satyam_biodata_data', JSON.stringify(data));
-            }, [data]);
+          <h3 class="font-serif text-xl font-bold text-emerald-900 border-b border-gold-500/20 pt-4 pb-3">Education & Career</h3>
+          <dl class="space-y-3 text-sm">
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Education:</dt><dd class="font-semibold text-emerald-900 text-right" id="bio-edu">B.Tech Aerospace Engg</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Organization:</dt><dd class="font-semibold text-emerald-900" id="bio-org">Boeing India Pvt Ltd</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Designation:</dt><dd class="font-semibold text-emerald-900" id="bio-role">System Engineer</dd></div>
+            <div class="flex justify-between"><dt class="text-emerald-800/70">Location:</dt><dd class="font-semibold text-emerald-900" id="bio-loc">Bangalore, India</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </section>
 
-            // UI States
-            const [activeTab, setActiveTab] = useState('all'); // for gallery
-            const [lightboxPhoto, setLightboxPhoto] = useState(null);
-            const [isAdminOpen, setIsAdminOpen] = useState(false);
-            const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
-            const [toastMessage, setToastMessage] = useState(null);
-            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  <!-- Family Section -->
+  <section id="family" class="py-16 px-6">
+    <div class="max-w-4xl mx-auto bg-ivory p-8 rounded-2xl border border-gold-500/20 shadow-sm space-y-6">
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-serif font-bold text-emerald-900">Family Background</h2>
+        <div class="w-16 h-1 bg-gold-500 mx-auto rounded-full"></div>
+      </div>
+      <dl class="grid md:grid-cols-2 gap-4 text-sm">
+        <div><dt class="text-emerald-800/70">Father's Name:</dt><dd class="font-semibold text-emerald-900" id="bio-father">Ashok Kumar Rout</dd></div>
+        <div><dt class="text-emerald-800/70">Father's Profession:</dt><dd class="font-semibold text-emerald-900" id="bio-father-prof">Fitter at L&T, Kansbahal</dd></div>
+        <div><dt class="text-emerald-800/70">Mother's Name:</dt><dd class="font-semibold text-emerald-900" id="bio-mother">Sanjukta Rout</dd></div>
+        <div><dt class="text-emerald-800/70">Mother's Profession:</dt><dd class="font-semibold text-emerald-900" id="bio-mother-prof">Homemaker</dd></div>
+        <div><dt class="text-emerald-800/70">Siblings:</dt><dd class="font-semibold text-emerald-900" id="bio-siblings">One younger sister (MSc final year student)</dd></div>
+        <div><dt class="text-emerald-800/70">Native Place:</dt><dd class="font-semibold text-emerald-900" id="bio-native">Rajkanika, Kendrapada, Odisha</dd></div>
+      </dl>
+    </div>
+  </section>
 
-            // Contact Form State
-            const [contactForm, setContactForm] = useState({ name: '', contact: '', message: '' });
-            const [formSubmitted, setFormSubmitted] = useState(false);
+  <!-- Gallery Section -->
+  <section id="gallery" class="py-16 px-6 bg-ivory border-t border-gold-500/10">
+    <div class="max-w-6xl mx-auto space-y-8">
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-serif font-bold text-emerald-900">Photo Gallery</h2>
+        <div class="w-16 h-1 bg-gold-500 mx-auto rounded-full"></div>
+      </div>
+      <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <!-- Dynamic Photos Loaded Securely -->
+      </div>
+    </div>
+  </section>
 
-            const showToast = (msg) => {
-                setToastMessage(msg);
-                setTimeout(() => setToastMessage(null), 3500);
-            };
+  <!-- Enquiry Contact Form Section -->
+  <section id="contact" class="py-16 px-6">
+    <div class="max-w-2xl mx-auto bg-ivory p-8 rounded-2xl border border-gold-500/20 shadow-md space-y-6">
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-serif font-bold text-emerald-900">Family Enquiry</h2>
+        <p class="text-sm text-emerald-800/70">Interested prospective families can send a direct message below.</p>
+      </div>
 
-            const copyWebsiteLink = () => {
-                const dummy = document.createElement('input');
-                document.body.appendChild(dummy);
-                dummy.value = window.location.href;
-                document.execCommand('copy');
-                document.body.removeChild(dummy);
-                showToast("Website link copied to clipboard!");
-            };
+      <form id="enquiry-form" onsubmit="handleEnquirySubmit(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-emerald-800/70 mb-1">Your Name *</label>
+          <input type="text" id="enq-name" required class="w-full px-4 py-2.5 rounded-lg border border-gold-500/20 bg-cream text-emerald-900 focus:outline-none focus:ring-2 focus:ring-gold-500">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-emerald-800/70 mb-1">Relationship</label>
+            <input type="text" id="enq-relation" placeholder="e.g. Parent / Self" class="w-full px-4 py-2.5 rounded-lg border border-gold-500/20 bg-cream text-emerald-900 focus:outline-none focus:ring-2 focus:ring-gold-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-emerald-800/70 mb-1">Contact Number *</label>
+            <input type="tel" id="enq-phone" required class="w-full px-4 py-2.5 rounded-lg border border-gold-500/20 bg-cream text-emerald-900 focus:outline-none focus:ring-2 focus:ring-gold-500">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-emerald-800/70 mb-1">Email Address (Optional)</label>
+          <input type="email" id="enq-email" class="w-full px-4 py-2.5 rounded-lg border border-gold-500/20 bg-cream text-emerald-900 focus:outline-none focus:ring-2 focus:ring-gold-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-emerald-800/70 mb-1">Message *</label>
+          <textarea id="enq-message" rows="4" required class="w-full px-4 py-2.5 rounded-lg border border-gold-500/20 bg-cream text-emerald-900 focus:outline-none focus:ring-2 focus:ring-gold-500"></textarea>
+        </div>
+        <button type="submit" id="enq-submit-btn" class="w-full bg-emerald-900 text-ivory py-3 rounded-lg font-semibold hover:bg-emerald-800 transition shadow">
+          Send Enquiry
+        </button>
+        <p id="enq-status-msg" class="text-xs text-center mt-2 hidden"></p>
+      </form>
+    </div>
+  </section>
 
-            const handleContactSubmit = (e) => {
-                e.preventDefault();
-                if (!contactForm.name || !contactForm.contact || !contactForm.message) {
-                    showToast("Please fill in all fields.");
-                    return;
-                }
-                setFormSubmitted(true);
-                showToast("Message sent successfully to Satyam's family!");
-                setContactForm({ name: '', contact: '', message: '' });
-                setTimeout(() => setFormSubmitted(false), 5000);
-            };
+  <!-- Admin Portal Modal -->
+  <div id="admin-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-ivory max-w-4xl w-full max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-gold-500/30 shadow-2xl space-y-6">
+      <div class="flex justify-between items-center border-b border-gold-500/20 pb-4">
+        <h3 class="text-2xl font-serif font-bold text-emerald-900">Admin Dashboard</h3>
+        <button onclick="closeAdminModal()" class="text-gray-500 hover:text-black font-bold text-lg">✕</button>
+      </div>
 
-            // Find profile photo
-            const profilePhoto = data.photos.find(p => p.isProfile) || data.photos[0];
+      <!-- Login View -->
+      <div id="admin-login-view" class="max-w-sm mx-auto space-y-4 py-8">
+        <h4 class="text-lg font-semibold text-center text-emerald-900">Administrator Authentication</h4>
+        <input type="email" id="admin-email" placeholder="Admin Email" class="w-full px-4 py-2 rounded border border-gold-500/20 bg-cream">
+        <input type="password" id="admin-password" placeholder="Password" class="w-full px-4 py-2 rounded border border-gold-500/20 bg-cream">
+        <button onclick="handleAdminLogin()" class="w-full bg-emerald-900 text-ivory py-2.5 rounded font-semibold hover:bg-emerald-800">Login</button>
+        <button onclick="handlePasswordReset()" class="w-full text-xs text-gold-600 hover:underline text-center block">Forgot Password?</button>
+        <p id="admin-login-error" class="text-xs text-red-600 text-center hidden"></p>
+      </div>
 
-            return (
-                <div className="min-h-screen bg-ivory text-forest font-sans relative">
-                    {/* Toast Notification */}
-                    {toastMessage && (
-                        <div className="fixed bottom-6 right-6 z-50 bg-forest text-white px-6 py-3 rounded-xl shadow-2xl border border-gold/30 flex items-center space-x-3 animate-bounce">
-                            <Icon name="check" className="w-5 h-5 text-gold" />
-                            <span className="font-medium text-sm">{toastMessage}</span>
-                        </div>
-                    )}
+      <!-- Dashboard Panel View (Hidden until Auth) -->
+      <div id="admin-panel-view" class="hidden space-y-8">
+        <div class="flex justify-between items-center bg-cream p-4 rounded-lg">
+          <span class="text-sm font-semibold text-emerald-900" id="admin-user-email-display">Logged in as Administrator</span>
+          <button onclick="handleAdminLogout()" class="text-xs bg-red-800 text-white px-3 py-1.5 rounded hover:bg-red-700">Logout</button>
+        </div>
 
-                    {/* Navigation Bar */}
-                    <nav className="sticky top-0 z-40 bg-ivory/90 backdrop-blur-md border-b border-gold/20 shadow-sm">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                            <a href="#home" className="flex items-center space-x-3">
-                                <div className="w-10 h-10 rounded-full bg-forest text-gold flex items-center justify-center font-serif font-bold text-xl border border-gold/40 shadow-inner">
-                                    SR
-                                </div>
-                                <div>
-                                    <h1 className="font-serif text-xl font-bold tracking-wide text-forest">Satyam Rout</h1>
-                                    <p className="text-xs text-warmgray tracking-widest uppercase">Marriage Biodata</p>
-                                </div>
-                            </a>
+        <!-- Tab Navigation inside Admin -->
+        <div class="flex border-b border-gold-500/20 space-x-4 text-sm font-semibold">
+          <button onclick="switchAdminTab('photos')" id="tab-btn-photos" class="pb-2 border-b-2 border-emerald-900 text-emerald-900">Photo Gallery</button>
+          <button onclick="switchAdminTab('biodata')" id="tab-btn-biodata" class="pb-2 text-gray-500 hover:text-emerald-900">Biodata Editor</button>
+          <button onclick="switchAdminTab('enquiries')" id="tab-btn-enquiries" class="pb-2 text-gray-500 hover:text-emerald-900">Enquiry Inbox</button>
+        </div>
 
-                            {/* Desktop Nav Links */}
-                            <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-                                <a href="#home" className="hover:text-gold transition-colors">Home</a>
-                                <a href="#biodata" className="hover:text-gold transition-colors">Biodata</a>
-                                <a href="#religious" className="hover:text-gold transition-colors">Astrological</a>
-                                <a href="#education" className="hover:text-gold transition-colors">Education & Career</a>
-                                <a href="#family" className="hover:text-gold transition-colors">Family</a>
-                                <a href="#gallery" className="hover:text-gold transition-colors">Gallery</a>
-                                <a href="#contact" className="hover:text-gold transition-colors">Contact</a>
-                            </div>
+        <!-- Tab 1: Photos Manager -->
+        <div id="admin-tab-photos" class="space-y-6">
+          <div class="bg-cream p-4 rounded-xl border border-gold-500/20 space-y-4">
+            <h4 class="font-serif font-bold text-md text-emerald-900">Upload New Photograph</h4>
+            <input type="file" id="photo-file-input" accept="image/*" class="block text-xs">
+            <input type="text" id="photo-caption-input" placeholder="Caption (optional)" class="w-full px-3 py-2 text-sm border rounded bg-white">
+            <div class="flex items-center gap-2">
+              <input type="checkbox" id="photo-profile-checkbox" class="rounded text-emerald-900">
+              <label for="photo-profile-checkbox" class="text-xs text-emerald-900 font-medium">Set as Main Profile Photograph</label>
+            </div>
+            <button onclick="handlePhotoUpload()" id="upload-photo-btn" class="bg-gold-500 text-white px-4 py-2 text-sm rounded font-semibold hover:bg-gold-600 transition">Upload Photo</button>
+            <p id="upload-status-msg" class="text-xs font-medium hidden"></p>
+          </div>
+          <div class="space-y-3">
+            <h4 class="font-serif font-bold text-md text-emerald-900">Manage Existing Photos</h4>
+            <div id="admin-photos-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-80 overflow-y-auto"></div>
+          </div>
+        </div>
 
-                            {/* Action Buttons */}
-                            <div className="hidden lg:flex items-center space-x-3">
-                                <button onClick={() => setIsPdfModalOpen(true)} className="bg-forest hover:bg-forest-dark text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow transition flex items-center space-x-2 border border-gold/30">
-                                    <Icon name="download" className="w-4 h-4 text-gold" />
-                                    <span>Download PDF</span>
-                                </button>
-                                <button onClick={() => setIsAdminOpen(true)} className="p-2.5 rounded-lg border border-gold/40 text-forest hover:bg-gold/10 transition" title="Admin Login">
-                                    <Icon name="lock" className="w-4 h-4" />
-                                </button>
-                            </div>
+        <!-- Tab 2: Biodata Editor -->
+        <div id="admin-tab-biodata" class="hidden space-y-4">
+          <h4 class="font-serif font-bold text-md text-emerald-900">Edit Biodata Information</h4>
+          <form id="admin-biodata-form" onsubmit="handleBiodataSave(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Full Name</label><input type="text" id="edit-fullname" class="w-full p-2 border rounded bg-cream" required></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Date of Birth</label><input type="text" id="edit-dob" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Time of Birth</label><input type="text" id="edit-tob" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Place of Birth</label><input type="text" id="edit-pob" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Height</label><input type="text" id="edit-height" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Blood Group</label><input type="text" id="edit-blood" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Languages</label><input type="text" id="edit-languages" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Religion</label><input type="text" id="edit-religion" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Caste</label><input type="text" id="edit-caste" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Gothra</label><input type="text" id="edit-gothra" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Rashi</label><input type="text" id="edit-rashi" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Education</label><input type="text" id="edit-edu" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Organization</label><input type="text" id="edit-org" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Designation</label><input type="text" id="edit-role" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Work Location</label><input type="text" id="edit-loc" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Father's Name</label><input type="text" id="edit-father" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Father's Profession</label><input type="text" id="edit-father-prof" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Mother's Name</label><input type="text" id="edit-mother" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Mother's Profession</label><input type="text" id="edit-mother-prof" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Siblings</label><input type="text" id="edit-siblings" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Native Place</label><input type="text" id="edit-native" class="w-full p-2 border rounded bg-cream"></div>
+            <div><label class="block text-xs font-semibold text-gray-600 mb-1">Phone Number (Private by default)</label><input type="text" id="edit-phone" class="w-full p-2 border rounded bg-cream"></div>
+            <div class="md:col-span-2 flex items-center gap-4 py-2">
+              <label class="flex items-center gap-2 text-xs font-semibold"><input type="checkbox" id="edit-phone-visible"> Make Phone Number Public</label>
+            </div>
+            <div class="md:col-span-2">
+              <button type="submit" class="bg-emerald-900 text-ivory px-6 py-2.5 rounded font-semibold hover:bg-emerald-800">Save Biodata Changes</button>
+              <span id="biodata-save-status" class="text-xs ml-3 font-semibold"></span>
+            </div>
+          </form>
+        </div>
 
-                            {/* Mobile menu button */}
-                            <div className="md:hidden flex items-center space-x-2">
-                                <button onClick={() => setIsAdminOpen(true)} className="p-2 text-forest">
-                                    <Icon name="lock" className="w-5 h-5" />
-                                </button>
-                                <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 text-forest">
-                                    <Icon name={mobileMenuOpen ? "close" : "menu"} className="w-6 h-6" />
-                                </button>
-                            </div>
-                        </div>
+        <!-- Tab 3: Enquiries Inbox -->
+        <div id="admin-tab-enquiries" class="hidden space-y-4">
+          <h4 class="font-serif font-bold text-md text-emerald-900">Family Enquiries Inbox</h4>
+          <div id="admin-enquiries-list" class="space-y-3 max-h-96 overflow-y-auto text-xs"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-                        {/* Mobile Menu dropdown */}
-                        {mobileMenuOpen && (
-                            <div className="md:hidden bg-cream border-b border-gold/20 px-4 pt-2 pb-6 space-y-3">
-                                <a href="#home" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Home</a>
-                                <a href="#biodata" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Biodata & Details</a>
-                                <a href="#religious" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Astrological</a>
-                                <a href="#education" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Education & Career</a>
-                                <a href="#family" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Family Background</a>
-                                <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Photo Gallery</a>
-                                <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="block py-2 font-medium">Contact & Inquiry</a>
-                                <div className="pt-2 flex space-x-3">
-                                    <button onClick={() => { setIsPdfModalOpen(true); setMobileMenuOpen(false); }} className="w-full bg-forest text-white py-2.5 rounded-lg text-sm font-medium flex items-center justify-center space-x-2">
-                                        <Icon name="download" className="w-4 h-4 text-gold" />
-                                        <span>Download PDF</span>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-                    </nav>
+  <!-- JavaScript Application Logic -->
+  <script>
+    // ==========================================
+    // SUPABASE CLIENT INITIALIZATION
+    // ==========================================
+    const { createClient } = window.supabase;
+    const SUPABASE_URL = 'https://vlidqemgoetqbkfxhiuw.supabase.co/rest/v1/'; // Replace with your Supabase URL
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZsaWRxZW1nb2V0cWJrZnhoaXV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Mjk4NTUsImV4cCI6MjEwODIwNTg1NX0.rBDQ7_1tm_ctErSOR_92qJ5iCgMgEbPkXKCyWnggc0w'; // Replace with your Supabase Anon Key
 
-                    {/* Hero Section */}
-                    <section id="home" className="relative pt-16 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-12">
-                        <div className="absolute inset-0 -z-10 bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:24px_24px] opacity-10"></div>
-                        
-                        <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
-                            <div className="inline-flex items-center space-x-2 bg-gold/15 text-forest px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest border border-gold/30">
-                                <span className="w-2 h-2 rounded-full bg-gold animate-ping"></span>
-                                <span>Verified Matrimonial Profile</span>
-                            </div>
-                            <h2 className="text-sm tracking-widest font-semibold uppercase text-gold">Marriage Biodata</h2>
-                            <h1 className="text-4xl sm:text-6xl font-serif font-bold text-forest leading-tight">
-                                Satyam Rout
-                            </h1>
-                            <p className="text-lg text-warmgray font-light max-w-xl mx-auto lg:mx-0">
-                                A little introduction to my life, family, education, and aspirations. System Engineer at Boeing India with a deep rooted foundation in Odia culture and family values.
-                            </p>
-                            <div className="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
-                                <a href="#biodata" className="bg-forest hover:bg-forest-dark text-white px-8 py-3.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition flex items-center space-x-2 border border-gold/30">
-                                    <span>View Biodata</span>
-                                    <Icon name="userCircle" className="w-5 h-5 text-gold" />
-                                </a>
-                                <a href="#gallery" className="bg-cream hover:bg-gold/20 text-forest border border-gold/40 px-8 py-3.5 rounded-xl font-medium shadow transition flex items-center space-x-2">
-                                    <span>Explore Photo Gallery</span>
-                                    <Icon name="camera" className="w-5 h-5 text-gold" />
-                                </a>
-                            </div>
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-                            <div className="pt-6 flex items-center justify-center lg:justify-start space-x-6 text-sm text-warmgray border-t border-gold/20">
-                                <div><strong className="text-forest font-semibold">Born:</strong> Rourkela, Odisha</div>
-                                <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
-                                <div><strong className="text-forest font-semibold">Working in:</strong> Bangalore</div>
-                                <div className="w-1.5 h-1.5 rounded-full bg-gold"></div>
-                                <div><strong className="text-forest font-semibold">Education:</strong> B.Tech Aerospace</div>
-                            </div>
-                        </div>
+    let currentBiodataId = null;
 
-                        {/* Profile Image Hero */}
-                        <div className="lg:w-1/2 flex justify-center">
-                            <div className="relative">
-                                <div className="absolute -inset-3 bg-gradient-to-tr from-gold to-forest rounded-3xl opacity-30 blur-lg"></div>
-                                <div className="relative w-72 sm:w-80 h-96 sm:h-[420px] rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-cream">
-                                    <img 
-                                        src={profilePhoto.url} 
-                                        alt="Satyam Rout Portrait" 
-                                        className="w-full h-full object-cover object-top hover:scale-105 transition duration-700"
-                                        onError={(e) => { e.target.src = "https://placehold.co/400x500/1E3A2F/D4AF37?text=Satyam+Rout"; }}
-                                    />
-                                    <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-forest/90 via-forest/40 to-transparent p-6 text-white text-center">
-                                        <p className="font-serif text-xl font-bold tracking-wide">Satyam Rout</p>
-                                        <p className="text-xs text-gold font-medium uppercase tracking-widest mt-0.5">Aerospace Engineer • Boeing</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+    window.addEventListener('DOMContentLoaded', () => {
+      loadBiodata();
+      loadGallery();
+      checkAuthSession();
+    });
 
-                    {/* Biodata & Personal Details Section */}
-                    <section id="biodata" className="py-20 bg-cream/60 border-y border-gold/20">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Comprehensive Overview</h2>
-                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Personal & Physical Details</h3>
-                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                                <p className="text-warmgray text-sm">Verified personal information sourced directly from official records.</p>
-                            </div>
+    async function checkAuthSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        document.getElementById('admin-login-view').classList.add('hidden');
+        document.getElementById('admin-panel-view').classList.remove('hidden');
+        document.getElementById('admin-user-email-display').innerText = `Logged in as: ${session.user.email}`;
+        fetchAdminEnquiries();
+        fetchAdminPhotos();
+      }
+    }
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
-                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
-                                        <Icon name="userCircle" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-warmgray uppercase tracking-wider">Full Name</p>
-                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.fullName}</p>
-                                    </div>
-                                </div>
+    // ==========================================
+    // LOAD PUBLIC BIODATA
+    // ==========================================
+    async function loadBiodata() {
+      try {
+        const { data, error } = await supabase.from('biodata_profiles').select('*').limit(1).single();
+        if (error) throw error;
+        if (!data) return;
 
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
-                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
-                                        <Icon name="calendar" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-warmgray uppercase tracking-wider">Date of Birth</p>
-                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.dob}</p>
-                                    </div>
-                                </div>
+        currentBiodataId = data.id;
 
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
-                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
-                                        <Icon name="clock" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-warmgray uppercase tracking-wider">Time of Birth</p>
-                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.timeOfBirth}</p>
-                                    </div>
-                                </div>
+        document.getElementById('bio-fullname').textContent = data.full_name || '';
+        document.getElementById('bio-dob').textContent = data.date_of_birth || '';
+        document.getElementById('bio-tob').textContent = data.time_of_birth || '';
+        document.getElementById('bio-pob').textContent = data.place_of_birth || '';
+        document.getElementById('bio-height').textContent = data.height || '';
+        document.getElementById('bio-blood').textContent = data.blood_group || '';
+        document.getElementById('bio-languages').textContent = data.languages || '';
+        document.getElementById('bio-religion').textContent = data.religion || '';
+        document.getElementById('bio-caste').textContent = data.caste || '';
+        document.getElementById('bio-gothra').textContent = data.gothra || '';
+        document.getElementById('bio-rashi').textContent = data.rashi || '';
+        document.getElementById('bio-edu').textContent = data.education || '';
+        document.getElementById('bio-org').textContent = data.organization || '';
+        document.getElementById('bio-role').textContent = data.designation || '';
+        document.getElementById('bio-loc').textContent = data.work_location || '';
+        document.getElementById('bio-father').textContent = data.father_name || '';
+        document.getElementById('bio-father-prof').textContent = data.father_profession || '';
+        document.getElementById('bio-mother').textContent = data.mother_name || '';
+        document.getElementById('bio-mother-prof').textContent = data.mother_profession || '';
+        document.getElementById('bio-siblings').textContent = data.sibling_details || '';
+        document.getElementById('bio-native').textContent = data.native_place || '';
+        if (data.about_me) document.getElementById('bio-about-hero').textContent = data.about_me;
 
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
-                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
-                                        <Icon name="mapPin" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-warmgray uppercase tracking-wider">Place of Birth</p>
-                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.placeOfBirth}</p>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
-                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
-                                        <Icon name="ruler" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-warmgray uppercase tracking-wider">Height</p>
-                                        <p className="font-serif text-xl font-bold text-forest mt-1">{data.personal.height}</p>
-                                    </div>
-                                </div>
-
-                                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 hover:shadow-md transition flex items-start space-x-4">
-                                    <div className="p-3 bg-gold/15 rounded-xl text-forest">
-                                        <Icon name="heart" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-warmgray uppercase tracking-wider">Blood Group & Languages</p>
-                                        <p className="font-serif text-lg font-bold text-forest mt-1">{data.personal.bloodGroup} • {data.personal.languages}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Religious and Astrological Section */}
-                    <section id="religious" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-                        <div className="bg-forest text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl border border-gold/40">
-                            <div className="absolute top-0 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none"></div>
-                            
-                            <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Heritage & Tradition</h2>
-                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-white">Religious & Astrological Details</h3>
-                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
-                                    <p className="text-xs text-gold uppercase tracking-wider">Religion</p>
-                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.religion}</p>
-                                </div>
-
-                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
-                                    <p className="text-xs text-gold uppercase tracking-wider">Caste / Sub-Caste</p>
-                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.caste}</p>
-                                </div>
-
-                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
-                                    <p className="text-xs text-gold uppercase tracking-wider">Gothra / Clan</p>
-                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.gothra}</p>
-                                </div>
-
-                                <div className="bg-forest-dark/80 backdrop-blur p-6 rounded-2xl border border-gold/30 text-center space-y-2">
-                                    <p className="text-xs text-gold uppercase tracking-wider">Rashi / Zodiac</p>
-                                    <p className="font-serif text-2xl font-bold text-white">{data.religious.rashi}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Education and Professional Details */}
-                    <section id="education" className="py-20 bg-cream/60 border-y border-gold/20">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Professional Journey</h2>
-                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Education & Career</h3>
-                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20 space-y-6 relative">
-                                    <div className="absolute top-6 right-6 p-3 bg-gold/15 rounded-2xl text-forest">
-                                        <Icon name="bookOpen" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <span className="text-xs font-semibold bg-gold/15 text-forest px-3 py-1 rounded-full uppercase tracking-wider">Education</span>
-                                    <div>
-                                        <h4 className="font-serif text-2xl font-bold text-forest mt-2">{data.education.degree}</h4>
-                                        <p className="text-warmgray font-medium mt-1">{data.education.college}</p>
-                                    </div>
-                                    <p className="text-sm text-warmgray leading-relaxed">
-                                        Specialized rigorous engineering curriculum focusing on advanced aerospace systems, aerodynamics, and structural mechanics.
-                                    </p>
-                                </div>
-
-                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20 space-y-6 relative">
-                                    <div className="absolute top-6 right-6 p-3 bg-gold/15 rounded-2xl text-forest">
-                                        <Icon name="briefcase" className="w-6 h-6 text-gold" />
-                                    </div>
-                                    <span className="text-xs font-semibold bg-gold/15 text-forest px-3 py-1 rounded-full uppercase tracking-wider">Current Profession</span>
-                                    <div>
-                                        <h4 className="font-serif text-2xl font-bold text-forest mt-2">{data.education.designation}</h4>
-                                        <p className="text-warmgray font-medium mt-1">{data.education.organization} • {data.education.location}</p>
-                                    </div>
-                                    <p className="text-sm text-warmgray leading-relaxed">
-                                        Working as a System Engineer at Boeing India Private Limited in Bangalore, contributing to world-class aerospace engineering systems and innovations.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Family Background Section */}
-                    <section id="family" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-                        <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                            <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Roots & Values</h2>
-                            <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Family Background</h3>
-                            <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                            <p className="text-warmgray text-sm">Hailing from a respected and cultured family with strong moral principles.</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
-                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
-                                    <Icon name="users" className="w-6 h-6 text-gold" />
-                                </div>
-                                <h4 className="font-serif text-xl font-bold text-forest">Father's Details</h4>
-                                <p className="font-semibold text-forest">{data.family.fatherName}</p>
-                                <p className="text-xs text-warmgray">{data.family.fatherProf}</p>
-                            </div>
-
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
-                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
-                                    <Icon name="heart" className="w-6 h-6 text-gold" />
-                                </div>
-                                <h4 className="font-serif text-xl font-bold text-forest">Mother's Details</h4>
-                                <p className="font-semibold text-forest">{data.family.motherName}</p>
-                                <p className="text-xs text-warmgray">{data.family.motherProf}</p>
-                            </div>
-
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
-                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
-                                    <Icon name="user" className="w-6 h-6 text-gold" />
-                                </div>
-                                <h4 className="font-serif text-xl font-bold text-forest">Sibling</h4>
-                                <p className="text-semibold text-forest text-sm">Younger Sister</p>
-                                <p className="text-xs text-warmgray">{data.family.sibling}</p>
-                            </div>
-
-                            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gold/20 text-center space-y-3">
-                                <div className="w-12 h-12 bg-gold/15 rounded-full flex items-center justify-center mx-auto text-forest font-bold">
-                                    <Icon name="mapPin" className="w-6 h-6 text-gold" />
-                                </div>
-                                <h4 className="font-serif text-xl font-bold text-forest">Native Place</h4>
-                                <p className="font-semibold text-forest">Rajkanika, Kendrapada</p>
-                                <p className="text-xs text-warmgray">Odisha, India</p>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Photo Gallery Section */}
-                    <section id="gallery" className="py-20 bg-cream/60 border-y border-gold/20">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Moments & Memories</h2>
-                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Photo Gallery</h3>
-                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                                <p className="text-warmgray text-sm">Glimpses of life, travels, and traditional occasions.</p>
-                            </div>
-
-                            {/* Category Filter */}
-                            <div className="flex justify-center space-x-2 sm:space-x-4 mb-10">
-                                {['all', 'Portrait', 'Traditional', 'Travel'].map(cat => (
-                                    <button
-                                        key={cat}
-                                        onClick={() => setActiveTab(cat)}
-                                        className={`px-5 py-2 rounded-full text-sm font-medium transition ${activeTab === cat ? 'bg-forest text-white shadow' : 'bg-white text-forest border border-gold/30 hover:bg-gold/10'}`}
-                                    >
-                                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-
-                            {/* Gallery Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {data.photos
-                                    .filter(p => activeTab === 'all' || p.category === activeTab)
-                                    .map(photo => (
-                                        <div 
-                                            key={photo.id} 
-                                            onClick={() => setLightboxPhoto(photo)}
-                                            className="group relative bg-white rounded-2xl overflow-hidden shadow-sm border border-gold/20 cursor-pointer hover:shadow-xl transition duration-300"
-                                        >
-                                            <div className="aspect-[4/5] w-full overflow-hidden bg-cream">
-                                                <img 
-                                                    src={photo.url} 
-                                                    alt={photo.caption} 
-                                                    className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500"
-                                                    onError={(e) => { e.target.src = "https://placehold.co/400x500/1E3A2F/D4AF37?text=Satyam+Rout"; }}
-                                                />
-                                            </div>
-                                            <div className="absolute inset-0 bg-gradient-to-t from-forest/80 via-transparent opacity-0 group-hover:opacity-150 transition duration-300 flex flex-col justify-end p-6 text-white">
-                                                <p className="font-serif text-lg font-bold">{photo.caption}</p>
-                                                <div className="flex items-center justify-between mt-1 text-xs text-gold">
-                                                    <span>{photo.category}</span>
-                                                    <span>{photo.date}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* About Me Section */}
-                    <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center space-y-6">
-                        <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Personality & Perspective</h2>
-                        <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">About Me</h3>
-                        <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                        <p className="text-lg text-warmgray font-light leading-relaxed max-w-3xl mx-auto">
-                            I am a passionate Aerospace Engineer driven by curiosity, precision, and dedication. Born in Rourkela and currently based in Bangalore working at Boeing India, I value intellectual growth, familial harmony, and cultural roots. In my spare time, I enjoy exploring ancient architecture, traveling, and staying balanced between modern technical pursuits and traditional values.
-                        </p>
-                    </section>
-
-                    {/* Contact & Social Profiles */}
-                    <section id="contact" className="py-20 bg-cream/60 border-t border-gold/20">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-                                <h2 className="text-xs font-semibold tracking-widest text-gold uppercase">Get in Touch</h2>
-                                <h3 className="text-3xl sm:text-4xl font-serif font-bold text-forest">Connect & Inquire</h3>
-                                <div className="w-16 h-0.5 bg-gold mx-auto"></div>
-                                <p className="text-warmgray text-sm">We welcome correspondence from prospective families and relatives.</p>
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                                {/* Left: Socials & Quick Actions */}
-                                <div className="space-y-8">
-                                    <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20 space-y-6">
-                                        <h4 className="font-serif text-2xl font-bold text-forest">Professional & Social Profiles</h4>
-                                        <div className="flex flex-col sm:flex-row gap-4">
-                                            <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer" className="flex-1 bg-cream hover:bg-gold/15 p-4 rounded-2xl border border-gold/30 flex items-center space-x-3 transition">
-                                                <div className="p-2.5 bg-forest text-gold rounded-xl">
-                                                    <Icon name="externalLink" className="w-5 h-5" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-warmgray">Connect on</p>
-                                                    <p className="font-semibold text-forest text-sm">LinkedIn Profile</p>
-                                                </div>
-                                            </a>
-
-                                            <a href={data.contact.instagram} target="_blank" rel="noopener noreferrer" className="flex-1 bg-cream hover:bg-gold/15 p-4 rounded-2xl border border-gold/30 flex items-center space-x-3 transition">
-                                                <div className="p-2.5 bg-forest text-gold rounded-xl">
-                                                    <Icon name="camera" className="w-5 h-5" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-xs text-warmgray">Follow on</p>
-                                                    <p className="font-semibold text-forest text-sm">Instagram Profile</p>
-                                                </div>
-                                            </a>
-                                        </div>
-
-                                        <div className="pt-4 border-t border-gold/20 flex flex-wrap gap-4">
-                                            <button onClick={copyWebsiteLink} className="flex-1 bg-forest hover:bg-forest-dark text-white px-5 py-3 rounded-xl font-medium text-sm flex items-center justify-center space-x-2 transition border border-gold/30">
-                                                <Icon name="share" className="w-4 h-4 text-gold" />
-                                                <span>Copy Website Link</span>
-                                            </button>
-                                            <button onClick={() => setIsPdfModalOpen(true)} className="flex-1 bg-gold hover:bg-gold-dark text-forest font-semibold px-5 py-3 rounded-xl text-sm flex items-center justify-center space-x-2 transition shadow">
-                                                <Icon name="download" className="w-4 h-4" />
-                                                <span>Download PDF Biodata</span>
-                                            </button>
-                                        </div>
-
-                                        {data.contact.showPhone && (
-                                            <div className="pt-4 border-t border-gold/25 flex items-center justify-between">
-                                                <div className="flex items-center space-x-3">
-                                                    <div className="p-2 bg-gold/15 rounded-full text-forest">
-                                                        <Icon name="phone" className="w-5 h-5 text-gold" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="text-xs text-warmgray">Direct Telephone</p>
-                                                        <p className="font-semibold text-forest">{data.contact.phone}</p>
-                                                    </div>
-                                                </div>
-                                                <a href={`tel:${data.contact.phone}`} className="bg-forest text-white px-4 py-2 rounded-xl text-xs font-medium">Call Now</a>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Right: Contact Form */}
-                                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gold/20">
-                                    <h4 className="font-serif text-2xl font-bold text-forest mb-2">Send a Family Inquiry</h4>
-                                    <p className="text-sm text-warmgray mb-6">Fill out this form to initiate conversation. All submissions are kept secure and confidential.</p>
-
-                                    <form onSubmit={handleContactSubmit} className="space-y-4">
-                                        <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Your Name / Family Representative</label>
-                                            <input 
-                                                type="text" 
-                                                required
-                                                value={contactForm.name} 
-                                                onChange={e => setContactForm({...contactForm, name: e.target.value})}
-                                                placeholder="Enter full name" 
-                                                className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-ivory focus:outline-none focus:ring-2 focus:ring-gold"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Contact Information (Phone / Email)</label>
-                                            <input 
-                                                type="text" 
-                                                required
-                                                value={contactForm.contact} 
-                                                onChange={e => setContactForm({...contactForm, contact: e.target.value})}
-                                                placeholder="Phone number or email" 
-                                                className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-ivory focus:outline-none focus:ring-2 focus:ring-gold"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Message / Proposal Details</label>
-                                            <textarea 
-                                                rows="4"
-                                                required
-                                                value={contactForm.message} 
-                                                onChange={e => setContactForm({...contactForm, message: e.target.value})}
-                                                placeholder="Write your message here..." 
-                                                className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-ivory focus:outline-none focus:ring-2 focus:ring-gold"
-                                            ></textarea>
-                                        </div>
-
-                                        <button type="submit" className="w-full bg-forest hover:bg-forest-dark text-white py-3.5 rounded-xl font-medium transition shadow flex items-center justify-center space-x-2 border border-gold/30">
-                                            <Icon name="mail" className="w-5 h-5 text-gold" />
-                                            <span>Send Inquiry</span>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Footer */}
-                    <footer className="bg-forest text-white py-12 border-t border-gold/30">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
-                            <div>
-                                <p className="font-serif text-xl font-bold">Satyam Rout — Marriage Biodata</p>
-                                <p className="text-xs text-gold mt-1">Aerospace Engineer • System Engineer at Boeing India</p>
-                            </div>
-                            <div className="text-xs text-warmgray">
-                                &copy; 2026 Satyam Rout. All rights reserved. Built with privacy & elegance.
-                            </div>
-                        </div>
-                    </footer>
-
-                    {/* Lightbox Modal */}
-                    {lightboxPhoto && (
-                        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-                            <button 
-                                onClick={() => setLightboxPhoto(null)} 
-                                className="absolute top-6 right-6 text-white bg-white/10 hover:bg-white/20 p-3 rounded-full transition"
-                            >
-                                <Icon name="close" className="w-6 h-6" />
-                            </button>
-                            <div className="max-w-4xl w-full max-h-[90vh] flex flex-col items-center">
-                                <img 
-                                    src={lightboxPhoto.url} 
-                                    alt={lightboxPhoto.caption} 
-                                    className="max-h-[75vh] object-contain rounded-2xl shadow-2xl border border-white/20"
-                                    onError={(e) => { e.target.src = "https://placehold.co/600x800/1E3A2F/D4AF37?text=Satyam+Rout"; }}
-                                />
-                                <div className="mt-4 text-center text-white">
-                                    <p className="font-serif text-2xl font-bold">{lightboxPhoto.caption}</p>
-                                    <p className="text-xs text-gold mt-1">{lightboxPhoto.category} • {lightboxPhoto.date}</p>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Printable Biodata PDF Modal */}
-                    {isPdfModalOpen && (
-                        <PdfModal data={data} profilePhoto={profilePhoto} onClose={() => setIsPdfModalOpen(false)} />
-                    )}
-
-                    {/* Admin Dashboard Modal */}
-                    {isAdminOpen && (
-                        <AdminModal data={data} setData={setData} onClose={() => setIsAdminOpen(false)} showToast={showToast} />
-                    )}
-                </div>
-            );
+        if (data.phone_visible && data.phone_number) {
+          document.getElementById('public-phone-container').classList.remove('hidden');
+          document.getElementById('bio-phone').textContent = data.phone_number;
         }
 
-        // Printable PDF Modal Component
-        function PdfModal({ data, profilePhoto, onClose }) {
-            const handlePrint = () => {
-                window.print();
-            };
+        // Populate admin form fields
+        document.getElementById('edit-fullname').value = data.full_name || '';
+        document.getElementById('edit-dob').value = data.date_of_birth || '';
+        document.getElementById('edit-tob').value = data.time_of_birth || '';
+        document.getElementById('edit-pob').value = data.place_of_birth || '';
+        document.getElementById('edit-height').value = data.height || '';
+        document.getElementById('edit-blood').value = data.blood_group || '';
+        document.getElementById('edit-languages').value = data.languages || '';
+        document.getElementById('edit-religion').value = data.religion || '';
+        document.getElementById('edit-caste').value = data.caste || '';
+        document.getElementById('edit-gothra').value = data.gothra || '';
+        document.getElementById('edit-rashi').value = data.rashi || '';
+        document.getElementById('edit-edu').value = data.education || '';
+        document.getElementById('edit-org').value = data.organization || '';
+        document.getElementById('edit-role').value = data.designation || '';
+        document.getElementById('edit-loc').value = data.work_location || '';
+        document.getElementById('edit-father').value = data.father_name || '';
+        document.getElementById('edit-father-prof').value = data.father_profession || '';
+        document.getElementById('edit-mother').value = data.mother_name || '';
+        document.getElementById('edit-mother-prof').value = data.mother_profession || '';
+        document.getElementById('edit-siblings').value = data.sibling_details || '';
+        document.getElementById('edit-native').value = data.native_place || '';
+        document.getElementById('edit-phone').value = data.phone_number || '';
+        document.getElementById('edit-phone-visible').checked = !!data.phone_visible;
 
-            return (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-                    <div className="bg-ivory rounded-3xl max-w-4xl w-full max-h-[95vh] overflow-y-auto shadow-2xl border-2 border-gold relative my-8">
-                        <div className="sticky top-0 bg-forest text-white p-4 px-8 flex items-center justify-between z-10 border-b border-gold/30">
-                            <h3 className="font-serif text-xl font-bold">Printable Marriage Biodata (A4 Format)</h3>
-                            <div className="flex items-center space-x-3">
-                                <button onClick={handlePrint} className="bg-gold hover:bg-gold-dark text-forest font-semibold px-4 py-2 rounded-xl text-sm flex items-center space-x-2 transition shadow">
-                                    <Icon name="download" className="w-4 h-4" />
-                                    <span>Print / Save PDF</span>
-                                </button>
-                                <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
-                                    <Icon name="close" className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
+      } catch (err) {
+        console.error('Error loading biodata:', err.message);
+      }
+    }
 
-                        {/* Printable Document Container */}
-                        <div id="printable-biodata" className="p-8 sm:p-12 bg-white text-forest space-y-8 font-sans">
-                            {/* Header */}
-                            <div className="text-center border-b-2 border-gold pb-6 space-y-2">
-                                <p className="text-xs tracking-widest uppercase text-gold font-semibold">|| Om Ganeshaya Namah ||</p>
-                                <h2 className="font-serif text-4xl font-bold text-forest">MARRIAGE BIODATA</h2>
-                                <p className="text-sm text-warmgray">Traditional & Professional Matrimonial Profile</p>
-                            </div>
+    // ==========================================
+    // LOAD PUBLIC GALLERY
+    // ==========================================
+    async function loadGallery() {
+      try {
+        const { data, error } = await supabase
+          .from('gallery_photos')
+          .select('*')
+          .eq('is_published', true)
+          .order('display_order', { ascending: true });
 
-                            {/* Main Content Grid */}
-                            <div className="flex flex-col md:flex-row gap-8 items-start">
-                                <div className="w-full md:w-1/3 flex flex-col items-center space-y-4">
-                                    <div className="w-48 h-60 rounded-xl overflow-hidden border-2 border-gold shadow-md">
-                                        <img src={profilePhoto.url} alt="Profile" className="w-full h-full object-cover object-top" />
-                                    </div>
-                                    <div className="text-center">
-                                        <h3 className="font-serif text-2xl font-bold text-forest">{data.personal.fullName}</h3>
-                                        <p className="text-xs text-gold uppercase tracking-wider font-semibold mt-1">{data.education.designation}</p>
-                                    </div>
-                                </div>
+        if (error) throw error;
 
-                                <div className="w-full md:w-2/3 space-y-6">
-                                    <div>
-                                        <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                            <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                            <span>Personal & Physical Details</span>
-                                        </h4>
-                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                            <div><strong className="text-warmgray">Date of Birth:</strong></div><div>{data.personal.dob}</div>
-                                            <div><strong className="text-warmgray">Time of Birth:</strong></div><div>{data.personal.timeOfBirth}</div>
-                                            <div><strong className="text-warmgray">Place of Birth:</strong></div><div>{data.personal.placeOfBirth}</div>
-                                            <div><strong className="text-warmgray">Height:</strong></div><div>{data.personal.height}</div>
-                                            <div><strong className="text-warmgray">Blood Group:</strong></div><div>{data.personal.bloodGroup}</div>
-                                            <div><strong className="text-warmgray">Languages:</strong></div><div>{data.personal.languages}</div>
-                                        </div>
-                                    </div>
+        const galleryGrid = document.getElementById('gallery-grid');
+        galleryGrid.innerHTML = '';
 
-                                    <div>
-                                        <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                            <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                            <span>Religious & Astrological Details</span>
-                                        </h4>
-                                        <div className="grid grid-cols-2 gap-y-2 text-sm">
-                                            <div><strong className="text-warmgray">Religion:</strong></div><div>{data.religious.religion}</div>
-                                            <div><strong className="text-warmgray">Caste:</strong></div><div>{data.religious.caste}</div>
-                                            <div><strong className="text-warmgray">Gothra:</strong></div><div>{data.religious.gothra}</div>
-                                            <div><strong className="text-warmgray">Rashi:</strong></div><div>{data.religious.rashi}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-gold/20">
-                                <div>
-                                    <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                        <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                        <span>Education & Career</span>
-                                    </h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div><strong className="text-warmgray">Degree:</strong> {data.education.degree}</div>
-                                        <div><strong className="text-warmgray">College:</strong> {data.education.college}</div>
-                                        <div><strong className="text-warmgray">Current Role:</strong> {data.education.designation}</div>
-                                        <div><strong className="text-warmgray">Organization:</strong> {data.education.organization} ({data.education.location})</div>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <h4 className="font-serif text-lg font-bold text-forest border-b border-gold/30 pb-1 mb-3 flex items-center space-x-2">
-                                        <span className="w-2 h-2 rounded-full bg-gold"></span>
-                                        <span>Family Background</span>
-                                    </h4>
-                                    <div className="space-y-2 text-sm">
-                                        <div><strong className="text-warmgray">Father:</strong> {data.family.fatherName} ({data.family.fatherProf})</div>
-                                        <div><strong className="text-warmgray">Mother:</strong> {data.family.motherName} ({data.family.motherProf})</div>
-                                        <div><strong className="text-warmgray">Sibling:</strong> {data.family.sibling}</div>
-                                        <div><strong className="text-warmgray">Native Place:</strong> {data.family.native}</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="pt-6 border-t border-gold/25 text-center text-xs text-warmgray">
-                                <p>Contact: {data.contact.phone} | Email: {data.contact.email}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
+        if (!data || data.length === 0) {
+          const p = document.createElement('p');
+          p.className = "text-xs text-gray-500 col-span-full text-center py-8";
+          p.textContent = "No photos available.";
+          galleryGrid.appendChild(p);
+          return;
         }
 
-        // Admin Dashboard Modal
-        function AdminModal({ data, setData, onClose, showToast }) {
-            const [isAuthenticated, setIsAuthenticated] = useState(false);
-            const [passwordInput, setPasswordInput] = useState('');
-            const [activeSubTab, setActiveSubTab] = useState('biodata');
-            const [formData, setFormData] = useState(data);
+        data.forEach(photo => {
+          if (photo.is_profile) {
+            document.getElementById('main-profile-img').src = photo.image_url;
+          }
 
-            const handleLogin = (e) => {
-                e.preventDefault();
-                if (passwordInput === 'Satyam2026@') {
-                    setIsAuthenticated(true);
-                    showToast("Admin access granted successfully!");
-                } else {
-                    showToast("Incorrect password. Default is Satyam2026@");
-                }
-            };
+          const card = document.createElement('div');
+          card.className = "bg-cream rounded-xl overflow-hidden border border-gold-500/20 shadow-sm hover:shadow-md transition";
+          
+          const img = document.createElement('img');
+          img.src = photo.image_url;
+          img.alt = photo.caption || 'Gallery photo';
+          img.className = "w-full h-64 object-cover";
+          card.appendChild(img);
 
-            const handleSave = () => {
-                setData(formData);
-                showToast("All changes saved and published successfully!");
-                onClose();
-            };
+          if (photo.caption) {
+            const capDiv = document.createElement('div');
+            capDiv.className = "p-3 text-xs text-center text-emerald-900 font-medium";
+            capDiv.textContent = photo.caption;
+            card.appendChild(capDiv);
+          }
 
-            const handleAddPhoto = (e) => {
-                e.preventDefault();
-                const url = e.target.photoUrl.value;
-                const caption = e.target.photoCaption.value;
-                const category = e.target.photoCategory.value;
-                if (!url) return;
+          galleryGrid.appendChild(card);
+        });
+      } catch (err) {
+        console.error('Error loading gallery:', err.message);
+      }
+    }
 
-                const newPhoto = {
-                    id: Date.now(),
-                    url,
-                    caption: caption || 'New Photo',
-                    category: category || 'Portrait',
-                    date: new Date().toISOString().split('T')[0],
-                    isProfile: false
-                };
+    // ==========================================
+    // HANDLE FAMILY ENQUIRY WITH RATE LIMITING
+    // ==========================================
+    async function handleEnquirySubmit(event) {
+      event.preventDefault();
+      const statusMsg = document.getElementById('enq-status-msg');
+      statusMsg.classList.remove('hidden');
 
-                setFormData({
-                    ...formData,
-                    photos: [newPhoto, ...formData.photos]
-                });
-                e.target.reset();
-                showToast("New photo added successfully!");
-            };
+      // Rate limiting check via localStorage (60 seconds cooldown)
+      const lastEnquiryTime = localStorage.getItem('last_enquiry_timestamp');
+      if (lastEnquiryTime && (Date.now() - parseInt(lastEnquiryTime) < 60000)) {
+        statusMsg.textContent = 'Please wait a minute before submitting another enquiry.';
+        statusMsg.className = 'text-xs text-center mt-2 text-amber-600 font-semibold';
+        return;
+      }
 
-            const handleDeletePhoto = (id) => {
-                setFormData({
-                    ...formData,
-                    photos: formData.photos.filter(p => p.id !== id)
-                });
-                showToast("Photo removed.");
-            };
+      const submitBtn = document.getElementById('enq-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
 
-            const handleSetProfilePhoto = (id) => {
-                setFormData({
-                    ...formData,
-                    photos: formData.photos.map(p => ({
-                        ...p,
-                        isProfile: p.id === id
-                    }))
-                });
-                showToast("Main profile photo updated!");
-            };
+      const payload = {
+        sender_name: document.getElementById('enq-name').value.trim(),
+        relationship: document.getElementById('enq-relation').value.trim(),
+        contact_number: document.getElementById('enq-phone').value.trim(),
+        email_address: document.getElementById('enq-email').value.trim(),
+        message: document.getElementById('enq-message').value.trim()
+      };
 
-            if (!isAuthenticated) {
-                return (
-                    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-                        <div className="bg-ivory rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gold relative space-y-6">
-                            <button onClick={onClose} className="absolute top-4 right-4 text-warmgray hover:text-forest">
-                                <Icon name="close" className="w-5 h-5" />
-                            </button>
-                            <div className="text-center space-y-2">
-                                <div className="w-14 h-14 bg-forest text-gold rounded-full flex items-center justify-center mx-auto shadow-inner">
-                                    <Icon name="lock" className="w-6 h-6" />
-                                </div>
-                                <h3 className="font-serif text-2xl font-bold text-forest">Admin Dashboard Login</h3>
-                                <p className="text-xs text-warmgray">Enter password to manage website details & photos.</p>
-                            </div>
+      try {
+        const { error } = await supabase.from('family_enquiries').insert([payload]);
+        if (error) throw error;
 
-                            <form onSubmit={handleLogin} className="space-y-4">
-                                <div>
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-warmgray mb-1">Admin Password</label>
-                                    <input 
-                                        type="password" 
-                                        required
-                                        value={passwordInput}
-                                        onChange={e => setPasswordInput(e.target.value)}
-                                        placeholder="Enter password"
-                                        className="w-full px-4 py-3 rounded-xl border border-gold/30 bg-white focus:outline-none focus:ring-2 focus:ring-gold"
-                                    />
-                                    <p className="text-[11px] text-warmgray mt-1">Default PIN: <code className="bg-gold/20 px-1 py-0.5 rounded font-mono">Satyam2026@</code></p>
-                                </div>
-                                <button type="submit" className="w-full bg-forest hover:bg-forest-dark text-white py-3 rounded-xl font-medium transition shadow border border-gold/30">
-                                    Authenticate
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                );
-            }
+        localStorage.setItem('last_enquiry_timestamp', Date.now().toString());
+        statusMsg.textContent = 'Enquiry submitted successfully! We will get in touch soon.';
+        statusMsg.className = 'text-xs text-center mt-2 text-green-700 font-semibold';
+        document.getElementById('enquiry-form').reset();
+      } catch (err) {
+        statusMsg.textContent = 'Failed to submit enquiry: ' + err.message;
+        statusMsg.className = 'text-xs text-center mt-2 text-red-600 font-semibold';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Enquiry';
+      }
+    }
 
-            return (
-                <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-                    <div className="bg-ivory rounded-3xl max-w-5xl w-full max-h-[95vh] overflow-y-auto shadow-2xl border-2 border-gold relative my-8 flex flex-col">
-                        {/* Admin Header */}
-                        <div className="sticky top-0 bg-forest text-white p-4 px-8 flex items-center justify-between z-10 border-b border-gold/30">
-                            <div className="flex items-center space-x-3">
-                                <Icon name="settings" className="w-6 h-6 text-gold" />
-                                <h3 className="font-serif text-xl font-bold">Admin Management Dashboard</h3>
-                            </div>
-                            <div className="flex items-center space-x-3">
-                                <button onClick={handleSave} className="bg-gold hover:bg-gold-dark text-forest font-semibold px-5 py-2 rounded-xl text-sm flex items-center space-x-2 transition shadow">
-                                    <Icon name="check" className="w-4 h-4" />
-                                    <span>Save & Publish</span>
-                                </button>
-                                <button onClick={onClose} className="p-2 bg-white/10 hover:bg-white/20 rounded-full transition">
-                                    <Icon name="close" className="w-5 h-5" />
-                                </button>
-                            </div>
-                        </div>
+    // ==========================================
+    // PDF GENERATION
+    // ==========================================
+    function generateBiodataPDF() {
+      const element = document.createElement('div');
+      element.style.padding = '20px';
+      element.style.fontFamily = 'sans-serif';
+      element.style.color = '#0F2C23';
+      element.style.backgroundColor = '#FFFFFF';
 
-                        {/* Admin Subtabs */}
-                        <div className="bg-cream border-b border-gold/20 px-8 py-3 flex space-x-4">
-                            <button 
-                                onClick={() => setActiveSubTab('biodata')}
-                                className={`px-4 py-2 rounded-xl text-sm font-medium transition ${activeSubTab === 'biodata' ? 'bg-forest text-white shadow' : 'text-forest hover:bg-gold/10'}`}
-                            >
-                                Edit Biodata Details
-                            </button>
-                            <button 
-                                onClick={() => setActiveSubTab('photos')}
-                                className={`px-4 py-2 rounded-xl text-sm font-medium transition ${activeSubTab === 'photos' ? 'bg-forest text-white shadow' : 'text-forest hover:bg-gold/10'}`}
-                            >
-                                Manage Photo Gallery
-                            </button>
-                            <button 
-                                onClick={() => setActiveSubTab('privacy')}
-                                className={`px-4 py-2 rounded-xl text-sm font-medium transition ${activeSubTab === 'privacy' ? 'bg-forest text-white shadow' : 'text-forest hover:bg-gold/10'}`}
-                            >
-                                Privacy & Contact Settings
-                            </button>
-                        </div>
+      element.innerHTML = `
+        <div style="text-align: center; border-bottom: 2px solid #C5A059; padding-bottom: 12px; margin-bottom: 16px;">
+          <h1 style="font-size: 24px; font-weight: bold; margin: 0;">MATRIMONIAL BIODATA</h1>
+          <h2 style="font-size: 18px; color: #555; margin: 4px 0 0 0;">${document.getElementById('bio-fullname').textContent}</h2>
+        </div>
+        <div style="font-size: 13px; line-height: 1.6;">
+          <h3 style="color: #0F2C23; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 12px;">Personal Details</h3>
+          <p><strong>Date of Birth:</strong> ${document.getElementById('bio-dob').textContent} (${document.getElementById('bio-tob').textContent})</p>
+          <p><strong>Place of Birth:</strong> ${document.getElementById('bio-pob').textContent}</p>
+          <p><strong>Height:</strong> ${document.getElementById('bio-height').textContent}</p>
+          <p><strong>Blood Group:</strong> ${document.getElementById('bio-blood').textContent}</p>
+          <p><strong>Languages Spoken:</strong> ${document.getElementById('bio-languages').textContent}</p>
+          
+          <h3 style="color: #0F2C23; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 12px;">Religious & Astrological</h3>
+          <p><strong>Religion:</strong> ${document.getElementById('bio-religion').textContent}</p>
+          <p><strong>Caste:</strong> ${document.getElementById('bio-caste').textContent}</p>
+          <p><strong>Gothra:</strong> ${document.getElementById('bio-gothra').textContent}</p>
+          <p><strong>Rashi:</strong> ${document.getElementById('bio-rashi').textContent}</p>
 
-                        {/* Admin Content Area */}
-                        <div className="p-8 space-y-8 flex-1">
-                            {activeSubTab === 'biodata' && (
-                                <div className="space-y-8">
-                                    {/* Personal Details */}
-                                    <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
-                                        <h4 className="font-serif text-xl font-bold text-forest">Personal & Physical Information</h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Full Name</label>
-                                                <input type="text" value={formData.personal.fullName} onChange={e => setFormData({...formData, personal: {...formData.personal, fullName: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Date of Birth</label>
-                                                <input type="text" value={formData.personal.dob} onChange={e => setFormData({...formData, personal: {...formData.personal, dob: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Time of Birth</label>
-                                                <input type="text" value={formData.personal.timeOfBirth} onChange={e => setFormData({...formData, personal: {...formData.personal, timeOfBirth: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Place of Birth</label>
-                                                <input type="text" value={formData.personal.placeOfBirth} onChange={e => setFormData({...formData, personal: {...formData.personal, placeOfBirth: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Height</label>
-                                                <input type="text" value={formData.personal.height} onChange={e => setFormData({...formData, personal: {...formData.personal, height: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Blood Group</label>
-                                                <input type="text" value={formData.personal.bloodGroup} onChange={e => setFormData({...formData, personal: {...formData.personal, bloodGroup: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                        </div>
-                                    </div>
+          <h3 style="color: #0F2C23; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 12px;">Education & Career</h3>
+          <p><strong>Education:</strong> ${document.getElementById('bio-edu').textContent}</p>
+          <p><strong>Designation:</strong> ${document.getElementById('bio-role').textContent}</p>
+          <p><strong>Organization:</strong> ${document.getElementById('bio-org').textContent}</p>
+          <p><strong>Work Location:</strong> ${document.getElementById('bio-loc').textContent}</p>
 
-                                    {/* Education & Career */}
-                                    <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
-                                        <h4 className="font-serif text-xl font-bold text-forest">Education & Professional Details</h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Degree</label>
-                                                <input type="text" value={formData.education.degree} onChange={e => setFormData({...formData, education: {...formData.education, degree: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">College / University</label>
-                                                <input type="text" value={formData.education.college} onChange={e => setFormData({...formData, education: {...formData.education, college: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Current Designation</label>
-                                                <input type="text" value={formData.education.designation} onChange={e => setFormData({...formData, education: {...formData.education, designation: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Organization</label>
-                                                <input type="text" value={formData.education.organization} onChange={e => setFormData({...formData, education: {...formData.education, organization: e.target.value}})} className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+          <h3 style="color: #0F2C23; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-top: 12px;">Family Background</h3>
+          <p><strong>Father's Name:</strong> ${document.getElementById('bio-father').textContent} (${document.getElementById('bio-father-prof').textContent})</p>
+          <p><strong>Mother's Name:</strong> ${document.getElementById('bio-mother').textContent} (${document.getElementById('bio-mother-prof').textContent})</p>
+          <p><strong>Siblings:</strong> ${document.getElementById('bio-siblings').textContent}</p>
+          <p><strong>Native Place:</strong> ${document.getElementById('bio-native').textContent}</p>
+        </div>
+      `;
 
-                            {activeSubTab === 'photos' && (
-                                <div className="space-y-8">
-                                    {/* Add Photo Form */}
-                                    <form onSubmit={handleAddPhoto} className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
-                                        <h4 className="font-serif text-xl font-bold text-forest">Add New Photograph</h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Image URL / Filename</label>
-                                                <input type="text" name="photoUrl" required placeholder="e.g. https://... or photo.jpg" className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Caption</label>
-                                                <input type="text" name="photoCaption" placeholder="Photo caption" className="w-full px-3 py-2 border rounded-lg text-sm" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-xs font-semibold text-warmgray mb-1">Category</label>
-                                                <select name="photoCategory" className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
-                                                    <option value="Portrait">Portrait</option>
-                                                    <option value="Traditional">Traditional</option>
-                                                    <option value="Travel">Travel</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <button type="submit" className="bg-forest hover:bg-forest-dark text-white px-5 py-2 rounded-xl text-sm font-medium transition">
-                                            Add Photo to Gallery
-                                        </button>
-                                    </form>
+      const opt = {
+        margin:       10,
+        filename:     'Satyam_Rout_Biodata.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
 
-                                    {/* Photo List */}
-                                    <div className="bg-white p-6 rounded-2xl border border-gold/20 shadow-sm space-y-4">
-                                        <h4 className="font-serif text-xl font-bold text-forest">Manage Existing Photos</h4>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                            {formData.photos.map(photo => (
-                                                <div key={photo.id} className="border rounded-xl p-3 flex flex-col space-y-3 bg-cream/40">
-                                                    <div className="h-40 rounded-lg overflow-hidden bg-white">
-                                                        <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" onError={(e)=>{e.target.src="https://placehold.co/300x300/1E3A2F/D4AF37?text=Image"}} />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-semibold text-sm">{photo.caption}</p>
-                                                        <p className="text-xs text-warmgray">{photo.category} {photo.isProfile && <span className="text-gold font-bold">• Main Profile</span>}</p>
-                                                    </div>
-                                                    <div className="flex items-center justify-between pt-2 border-t border-gold/20">
-                                                        {!photo.isProfile && (
-                                                            <button onClick={() => handleSetProfilePhoto(photo.id)} className="text-xs text-forest font-semibold hover:underline">
-                                                                Set as Profile
-                                                            </button>
-                                                        )}
-                                                        <button onClick={() => handleDeletePhoto(photo.id)} className="text-xs text-red-600 font-semibold flex items-center space-x-1">
-                                                            <Icon name="trash" className="w-3.5 h-3.5" />
-                                                            <span>Delete</span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
+      html2pdf().set(opt).from(element).save();
+    }
 
-                            {activeSubTab === 'privacy' && (
-                                <div className="space-y-6 bg-white p-6 rounded-2xl border border-gold/20 shadow-sm">
-                                    <h4 className="font-serif text-xl font-bold text-forest">Contact Visibility & Privacy</h4>
-                                    <div className="space-y-4">
-                                        <label className="flex items-center space-x-3 cursor-pointer">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={formData.contact.showPhone}
-                                                onChange={e => setFormData({...formData, contact: {...formData.contact, showPhone: e.target.checked}})}
-                                                className="w-5 h-5 text-forest rounded border-gold focus:ring-gold"
-                                            />
-                                            <span className="text-sm font-medium text-forest">Display phone number publicly on website</span>
-                                        </label>
+    // ==========================================
+    // ADMIN AUTHENTICATION & TABS
+    // ==========================================
+    function openAdminModal() { document.getElementById('admin-modal').classList.remove('hidden'); }
+    function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
 
-                                        <label className="flex items-center space-x-3 cursor-pointer">
-                                            <input 
-                                                type="checkbox" 
-                                                checked={formData.contact.showAddress}
-                                                onChange={e => setFormData({...formData, contact: {...formData.contact, showAddress: e.target.checked}})}
-                                                className="w-5 h-5 text-forest rounded border-gold focus:ring-gold"
-                                            />
-                                            <span className="text-sm font-medium text-forest">Display exact residential address publicly</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            );
+    function switchAdminTab(tabName) {
+      document.getElementById('admin-tab-photos').classList.add('hidden');
+      document.getElementById('admin-tab-biodata').classList.add('hidden');
+      document.getElementById('admin-tab-enquiries').classList.add('hidden');
+      document.getElementById('tab-btn-photos').className = "pb-2 text-gray-500 hover:text-emerald-900";
+      document.getElementById('tab-btn-biodata').className = "pb-2 text-gray-500 hover:text-emerald-900";
+      document.getElementById('tab-btn-enquiries').className = "pb-2 text-gray-500 hover:text-emerald-900";
+
+      document.getElementById(`admin-tab-${tabName}`).classList.remove('hidden');
+      document.getElementById(`tab-btn-${tabName}`).className = "pb-2 border-b-2 border-emerald-900 text-emerald-900 font-semibold";
+
+      if (tabName === 'enquiries') fetchAdminEnquiries();
+      if (tabName === 'photos') fetchAdminPhotos();
+    }
+
+    async function handleAdminLogin() {
+      const email = document.getElementById('admin-email').value.trim();
+      const password = document.getElementById('admin-password').value;
+      const errorMsg = document.getElementById('admin-login-error');
+
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        errorMsg.classList.add('hidden');
+        document.getElementById('admin-login-view').classList.add('hidden');
+        document.getElementById('admin-panel-view').classList.remove('hidden');
+        document.getElementById('admin-user-email-display').textContent = `Logged in as: ${data.session.user.email}`;
+        fetchAdminEnquiries();
+        fetchAdminPhotos();
+      } catch (err) {
+        errorMsg.textContent = err.message;
+        errorMsg.classList.remove('hidden');
+      }
+    }
+
+    async function handlePasswordReset() {
+      const email = prompt('Enter your administrator email address for password recovery:');
+      if (!email) return;
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        if (error) throw error;
+        alert('Password recovery email sent successfully! Check your inbox.');
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    async function handleAdminLogout() {
+      await supabase.auth.signOut();
+      document.getElementById('admin-login-view').classList.remove('hidden');
+      document.getElementById('admin-panel-view').classList.add('hidden');
+    }
+
+    // ==========================================
+    // ADMIN BIODATA EDITOR SAVE
+    // ==========================================
+    async function handleBiodataSave(event) {
+      event.preventDefault();
+      const statusSpan = document.getElementById('biodata-save-status');
+      statusSpan.textContent = 'Saving...';
+      statusSpan.className = 'text-xs ml-3 font-semibold text-amber-600';
+
+      const payload = {
+        full_name: document.getElementById('edit-fullname').value,
+        date_of_birth: document.getElementById('edit-dob').value,
+        time_of_birth: document.getElementById('edit-tob').value,
+        place_of_birth: document.getElementById('edit-pob').value,
+        height: document.getElementById('edit-height').value,
+        blood_group: document.getElementById('edit-blood').value,
+        languages: document.getElementById('edit-languages').value,
+        religion: document.getElementById('edit-religion').value,
+        caste: document.getElementById('edit-caste').value,
+        gothra: document.getElementById('edit-gothra').value,
+        rashi: document.getElementById('edit-rashi').value,
+        education: document.getElementById('edit-edu').value,
+        organization: document.getElementById('edit-org').value,
+        designation: document.getElementById('edit-role').value,
+        work_location: document.getElementById('edit-loc').value,
+        father_name: document.getElementById('edit-father').value,
+        father_profession: document.getElementById('edit-father-prof').value,
+        mother_name: document.getElementById('edit-mother').value,
+        mother_profession: document.getElementById('edit-mother-prof').value,
+        sibling_details: document.getElementById('edit-siblings').value,
+        native_place: document.getElementById('edit-native').value,
+        phone_number: document.getElementById('edit-phone').value,
+        phone_visible: document.getElementById('edit-phone-visible').checked,
+        updated_at: new Date()
+      };
+
+      try {
+        let error;
+        if (currentBiodataId) {
+          const res = await supabase.from('biodata_profiles').update(payload).eq('id', currentBiodataId);
+          error = res.error;
+        } else {
+          const res = await supabase.from('biodata_profiles').insert([payload]);
+          error = res.error;
         }
 
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
+        if (error) throw error;
+
+        statusSpan.textContent = 'Saved successfully!';
+        statusSpan.className = 'text-xs ml-3 font-semibold text-green-700';
+        loadBiodata();
+      } catch (err) {
+        statusSpan.textContent = 'Error: ' + err.message;
+        statusSpan.className = 'text-xs ml-3 font-semibold text-red-600';
+      }
+    }
+
+    // ==========================================
+    // ADMIN PHOTO UPLOAD & MANAGEMENT
+    // ==========================================
+    async function handlePhotoUpload() {
+      const fileInput = document.getElementById('photo-file-input');
+      const caption = document.getElementById('photo-caption-input').value.trim();
+      const isProfile = document.getElementById('photo-profile-checkbox').checked;
+      const statusMsg = document.getElementById('upload-status-msg');
+      statusMsg.classList.remove('hidden');
+
+      if (!fileInput.files.length) {
+        statusMsg.textContent = 'Please select a photo file first.';
+        statusMsg.className = 'text-xs font-semibold text-red-600';
+        return;
+      }
+
+      const file = fileInput.files[0];
+      if (file.size > 5 * 1024 * 1024) {
+        statusMsg.textContent = 'File size must be under 5MB.';
+        statusMsg.className = 'text-xs font-semibold text-red-600';
+        return;
+      }
+
+      statusMsg.textContent = 'Uploading...';
+      statusMsg.className = 'text-xs font-semibold text-amber-600';
+
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
+
+      try {
+        const { error: uploadError } = await supabase.storage
+          .from('biodata-media')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicUrlData } = supabase.storage
+          .from('biodata-media')
+          .getPublicUrl(fileName);
+
+        const publicUrl = publicUrlData.publicUrl;
+
+        if (isProfile) {
+          await supabase.from('gallery_photos').update({ is_profile: false }).neq('id', '00000000-0000-0000-0000-000000000000');
+        }
+
+        const { error: dbError } = await supabase.from('gallery_photos').insert([{
+          image_url: publicUrl,
+          caption: caption,
+          is_profile: isProfile,
+          is_published: true
+        }]);
+
+        if (dbError) throw dbError;
+
+        statusMsg.textContent = 'Photo uploaded successfully!';
+        statusMsg.className = 'text-xs font-semibold text-green-700';
+        fileInput.value = '';
+        document.getElementById('photo-caption-input').value = '';
+        document.getElementById('photo-profile-checkbox').checked = false;
+        loadGallery();
+        fetchAdminPhotos();
+      } catch (err) {
+        statusMsg.textContent = 'Upload failed: ' + err.message;
+        statusMsg.className = 'text-xs font-semibold text-red-600';
+      }
+    }
+
+    async function fetchAdminPhotos() {
+      try {
+        const { data, error } = await supabase.from('gallery_photos').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        const listContainer = document.getElementById('admin-photos-list');
+        listContainer.innerHTML = '';
+
+        if (!data || data.length === 0) {
+          listContainer.innerHTML = '<p class="text-xs text-gray-500">No photos uploaded.</p>';
+          return;
+        }
+
+        data.forEach(photo => {
+          const item = document.createElement('div');
+          item.className = "flex items-center gap-3 p-2 bg-white rounded border border-gold-500/20";
+          
+          const img = document.createElement('img');
+          img.src = photo.image_url;
+          img.className = "w-14 h-14 object-cover rounded";
+          item.appendChild(img);
+
+          const info = document.createElement('div');
+          info.className = "flex-1 text-xs space-y-1";
+          info.innerHTML = `
+            <p class="font-semibold text-emerald-900">${photo.caption || 'No caption'}</p>
+            <p class="text-gray-500">${photo.is_profile ? '⭐ Main Profile Photo' : ''} ${photo.is_published ? '🟢 Published' : '🔴 Hidden'}</p>
+          `;
+          item.appendChild(info);
+
+          const delBtn = document.createElement('button');
+          delBtn.className = "bg-red-800 text-white px-2.5 py-1 rounded text-xs hover:bg-red-700";
+          delBtn.textContent = "Delete";
+          delBtn.onclick = () => deletePhoto(photo.id, photo.image_url);
+          item.appendChild(delBtn);
+
+          listContainer.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Error fetching admin photos:', err.message);
+      }
+    }
+
+    async function deletePhoto(id, imageUrl) {
+      if (!confirm('Are you sure you want to delete this photograph?')) return;
+      try {
+        const { error } = await supabase.from('gallery_photos').delete().eq('id', id);
+        if (error) throw error;
+        loadGallery();
+        fetchAdminPhotos();
+      } catch (err) {
+        alert('Failed to delete photo: ' + err.message);
+      }
+    }
+
+    async function fetchAdminEnquiries() {
+      try {
+        const { data, error } = await supabase.from('family_enquiries').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        const listContainer = document.getElementById('admin-enquiries-list');
+        listContainer.innerHTML = '';
+
+        if (!data || data.length === 0) {
+          listContainer.innerHTML = '<p class="text-gray-500">No family enquiries received yet.</p>';
+          return;
+        }
+
+        data.forEach(enq => {
+          const item = document.createElement('div');
+          item.className = "p-3 bg-cream rounded border border-gold-500/20 space-y-1";
+          item.innerHTML = `
+            <div class="flex justify-between font-semibold text-emerald-900">
+              <span>${enq.sender_name} (${enq.relationship || 'Self'})</span>
+              <span>${enq.contact_number}</span>
+            </div>
+            <p class="text-gray-700">${enq.message}</p>
+            <div class="flex justify-between items-center text-[10px] text-gray-400 pt-1">
+              <span>${new Date(enq.created_at).toLocaleString()}</span>
+              <span>${enq.email_address || 'No email provided'}</span>
+            </div>
+          `;
+          listContainer.appendChild(item);
+        });
+      } catch (err) {
+        console.error('Error fetching enquiries:', err.message);
+      }
+    }
+  </script>
 </body>
 </html>
